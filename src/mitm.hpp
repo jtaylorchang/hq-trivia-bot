@@ -14,9 +14,12 @@
 class Mitm {
     
 private:
+    bool connected_;
     std::string latest_message_;
     
 public:
+    bool IsConnected();
+    void SetConnected(bool connected);
     std::string GetLatestMessage();
     void SetLatestMessage(std::string message);
     

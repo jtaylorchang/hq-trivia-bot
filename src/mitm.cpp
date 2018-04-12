@@ -7,6 +7,14 @@
 
 #include "mitm.hpp"
 
+bool Mitm::IsConnected() {
+    return connected_;
+}
+
+void Mitm::SetConnected(bool connected) {
+    connected_ = connected;
+}
+
 std::string Mitm::GetLatestMessage() {
     return latest_message_;
 }

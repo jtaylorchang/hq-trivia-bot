@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-//SocketHandler *socket = [SocketHandler new];
+std::string prepared_payload = "";
 
 void SetupSwift() {
     SocketHandler.url = @"wss://echo.websocket.org";
@@ -23,6 +23,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     std::string latest_message = GetLatestMessage();
+    mitm_.SetConnected(SocketHandler.connected);
     if (!latest_message.empty()) {
         mitm_.SetLatestMessage(latest_message);
     }
@@ -30,16 +31,30 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    std::string value = mitm_.GetLatestMessage();
-    ofDrawBitmapString(value, 30, 30);
+    std::string connection = "FALSE";
+    if (mitm_.IsConnected()) {
+        connection = "TRUE";
+    }
+    ofDrawBitmapString("Web Socket Connection: " + connection, 30, 30);
+    
+    ofDrawBitmapString("Sending: " + prepared_payload, 30, 45);
+    
+    std::string received_value = mitm_.GetLatestMessage();
+    ofDrawBitmapString("Received: " + received_value, 30, 60);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    std::cout << "Sending key press: " << key << std::endl;
-    NSString *message_to_send = @(std::to_string(key).c_str());
-    SocketHandler.payload = message_to_send;
-    [SocketHandler send];
+    if (key == OF_KEY_RETURN) {
+        NSString *message_to_send = @(prepared_payload.c_str());
+        SocketHandler.payload = message_to_send;
+        [SocketHandler send];
+        prepared_payload.clear();
+    } else {
+        std::string key_str;
+        key_str = char(key);
+        prepared_payload.append(key_str);
+    }
 }
 
 //--------------------------------------------------------------
