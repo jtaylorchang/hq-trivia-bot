@@ -1,9 +1,15 @@
 #pragma once
 
 #include "ofMain.h"
+#include "search_cred.hpp"
+#include "sleuth.hpp"
+#include "mitm.hpp"
 #import "Holmes-Swift.h"
 
 class ofApp : public ofBaseApp{
+    
+private:
+    Mitm mitm_;
 
 	public:
 		void setup();

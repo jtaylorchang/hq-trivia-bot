@@ -3,6 +3,7 @@
 
 /**
  Final Project: Holmes
+    by Jeff Taylor-Chang 2018
  
  EXPLANATION:
     The core of Holmes is built in C++ using OpenFrameworks and various ofx libraries that handle
@@ -20,7 +21,15 @@
  not compile properly if done in Debug mode.
  
  LIBRARIES AND CREDIT:
- 
+    - ofxGUI
+    - ofxJSON
+    - ofxHTTP
+    - ofxIO
+    - ofxMediaType
+    - ofxNetworkUtils
+    - ofxSSLManager
+    - ofxTaskQueue
+    - WebSocket
  */
 
 //========================================================================
