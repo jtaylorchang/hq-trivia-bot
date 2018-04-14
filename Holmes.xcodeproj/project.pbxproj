@@ -1064,9 +1064,9 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6B574EBB207F86A500CD4DA4 /* WebSocket.swift */,
 				6B574EBC207F86A500CD4DA4 /* bridge.swift */,
 				6BF68BA4207FB15600DB541E /* SocketHandler.swift */,
-				6B574EBB207F86A500CD4DA4 /* WebSocket.swift */,
 				6B574EBD207F86A500CD4DA4 /* main.mm */,
 				6B574EBE207F86A500CD4DA4 /* ofApp.mm */,
 				6BF68BA9207FB39400DB541E /* search_cred.cpp */,

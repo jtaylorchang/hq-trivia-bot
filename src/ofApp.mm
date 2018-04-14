@@ -2,12 +2,16 @@
 
 std::string prepared_payload = "";
 
-void SetupSwift() {
-    SocketHandler.url = @"wss://echo.websocket.org";
+void ofApp::SetupMitm() {
+    mitm_.SetupBroadcast("https://api-quiz.hype.space/shows/now?type=hq&userId=USER_ID");
+}
+
+void ofApp::SetupSwift() {
+    SocketHandler.url = @"wss://ws-quiz.hype.space/ws/44451";
     [SocketHandler connect];
 }
 
-std::string GetLatestMessage() {
+std::string ofApp::GetLatestMessage() {
     std::string value = std::string([SocketHandler.latest_message UTF8String]);
     return value;
 }
@@ -16,6 +20,7 @@ std::string GetLatestMessage() {
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofBackground(0);
+    SetupMitm();
     SetupSwift();
     mitm_.SetLatestMessage("Message pending");
 }
