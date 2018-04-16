@@ -4,14 +4,16 @@
 #include <stdio.h>
 #include <string>
 
+using std::string;
+
 class SearchCred {
     
 private:
-    std::string api_key_;
-    std::string cx_code_;
+    string api_key_;
+    string cx_code_;
     
 public:
-    SearchCred(std::string key, std::string cx) : api_key_(key), cx_code_(cx) {};
+    SearchCred(string key, string cx) : api_key_(key), cx_code_(cx) {};
     
     /**
      * Get the url for the Google Custom Search for a given message using the predefined auth.
@@ -19,7 +21,7 @@ public:
      * @param search the text to search for
      * @return the url for the Google Custom Search
      */
-    std::string GetUrl(std::string query);
+    string GetUrl(string query);
     
 };
 

@@ -50,6 +50,7 @@
 		6BF68BAB207FB39400DB541E /* search_cred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BA9207FB39400DB541E /* search_cred.cpp */; };
 		6BF68BAE207FB55F00DB541E /* sleuth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BAC207FB55F00DB541E /* sleuth.cpp */; };
 		6BF68BB8207FC26B00DB541E /* mitm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BB6207FC26B00DB541E /* mitm.cpp */; };
+		6BFFB8742084137B00C17204 /* utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BFFB8722084137B00C17204 /* utility.cpp */; };
 		712A36E53BD5232A5078D74A /* OAuth20Credentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900C7EC4E3EA498130F1DD62 /* OAuth20Credentials.cpp */; };
 		759634F9FC415ED965714767 /* WebSocketRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE9D147C30CF12A76AC8AF02 /* WebSocketRoute.cpp */; };
 		772823EA61998CAD3D1862C8 /* OAuth10RequestFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04CD79E21C604749B256F18D /* OAuth10RequestFilter.cpp */; };
@@ -248,6 +249,8 @@
 		6BF68BAD207FB55F00DB541E /* sleuth.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sleuth.hpp; sourceTree = "<group>"; };
 		6BF68BB6207FC26B00DB541E /* mitm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mitm.cpp; sourceTree = "<group>"; };
 		6BF68BB7207FC26B00DB541E /* mitm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = mitm.hpp; sourceTree = "<group>"; };
+		6BFFB8722084137B00C17204 /* utility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utility.cpp; sourceTree = "<group>"; };
+		6BFFB8732084137B00C17204 /* utility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utility.hpp; sourceTree = "<group>"; };
 		6F65B5134D555338C87F426A /* BaseServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = BaseServer.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/src/BaseServer.cpp; sourceTree = SOURCE_ROOT; };
 		6F70399AB86FED2BAB300FC5 /* Session.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Session.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/Session.h; sourceTree = SOURCE_ROOT; };
 		70D1CEAC90108653E1916A4E /* AbstractServerTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractServerTypes.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/AbstractServerTypes.h; sourceTree = SOURCE_ROOT; };
@@ -1069,13 +1072,15 @@
 				6BF68BA4207FB15600DB541E /* SocketHandler.swift */,
 				6B574EBD207F86A500CD4DA4 /* main.mm */,
 				6B574EBE207F86A500CD4DA4 /* ofApp.mm */,
-				6BF68BA9207FB39400DB541E /* search_cred.cpp */,
-				6BF68BAC207FB55F00DB541E /* sleuth.cpp */,
 				6BF68BB6207FC26B00DB541E /* mitm.cpp */,
+				6BF68BAC207FB55F00DB541E /* sleuth.cpp */,
+				6BF68BA9207FB39400DB541E /* search_cred.cpp */,
+				6BFFB8722084137B00C17204 /* utility.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				6BF68BAA207FB39400DB541E /* search_cred.hpp */,
-				6BF68BAD207FB55F00DB541E /* sleuth.hpp */,
 				6BF68BB7207FC26B00DB541E /* mitm.hpp */,
+				6BF68BAD207FB55F00DB541E /* sleuth.hpp */,
+				6BF68BAA207FB39400DB541E /* search_cred.hpp */,
+				6BFFB8732084137B00C17204 /* utility.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1239,6 +1244,7 @@
 				D186F87E991EEEF2B3EE1607 /* DefaultRedirectProcessor.cpp in Sources */,
 				A9CA54326603BFA5029E72EA /* PutRequest.cpp in Sources */,
 				B1449C9DA6BC6470E1014DF6 /* ThreadSettings.cpp in Sources */,
+				6BFFB8742084137B00C17204 /* utility.cpp in Sources */,
 				EB3D577088AE7DBAB46E9466 /* FileSystemRoute.cpp in Sources */,
 				8D1E10EF50181EB4AFF75AEB /* Context.cpp in Sources */,
 				A74756E4CB27D44FB96D076E /* DefaultClient.cpp in Sources */,
