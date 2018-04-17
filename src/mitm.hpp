@@ -78,6 +78,16 @@ public:
      */
     void ApplyHeaders(GetRequest &request, map<string, string> &headers);
     
+    /**
+     * Parses the latest message from the socket and retrieves question and answer data
+     *
+     * @param question_dest the reference to the variables to store the question
+     * @param answer1_dest the reference to the variables to store the first answer choice
+     * @param answer2_dest the reference to the variables to store the second answer choice
+     * @param answer3_dest the reference to the variables to store the third answer choice
+     */
+    void ParseMessage(string &question_dest, string &answer1_dest, string &answer2_dest, string &answer3_dest);
+    
     /* GETTERS AND SETTERS */
     
     bool IsConnected();
@@ -85,7 +95,6 @@ public:
     string GetLatestMessage();
     void SetLatestMessage(string message);
     string GetSocketUrl();
-    
     map<string, string> &GetSocketHeaders();
 };
 

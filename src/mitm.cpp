@@ -25,16 +25,13 @@ void Mitm::SetupBroadcast(string url) {
  * Initializes the headers for the socket connection (handled in Swift)
  */
 void Mitm::SetupSocket() {
-    
-    /*
-     request.addValue("iOS/1.3.2 b84", forHTTPHeaderField: "x-hq-client")
-     request.addValue("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMDk4MDUzLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEwMTEiLCJhdmF0YXJVcmwiOiJzMzovL2h5cGVzcGFjZS1xdWl6L2RlZmF1bHRfYXZhdGFycy9VbnRpdGxlZC0xXzAwMDRfZ29sZC5wbmciLCJ0b2tlbiI6bnVsbCwicm9sZXMiOltdLCJjbGllbnQiOiIiLCJndWVzdElkIjpudWxsLCJ2IjoxLCJpYXQiOjE1MTk1MTE5NTksImV4cCI6MTUyNzI4Nzk1OSwiaXNzIjoiaHlwZXF1aXovMSJ9.AoMWU1tj7w0KXYcrm0a8UwxjA0g_xuPehOAAMlPnWNY", forHTTPHeaderField: "Authorization")
-     request.addValue("MQ==", forHTTPHeaderField: "x-hq-stk")
-     request.addValue("api-quiz.hype.space", forHTTPHeaderField: "Host")
-     request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
-     request.addValue("gzip", forHTTPHeaderField: "Accept-Encoding")
-     request.addValue("okhttp/3.8.0", forHTTPHeaderField: "User-Agent")
-     */
+    SetMapValue(socket_headers_, "x-hq-client", "iOS/1.3.2 b84");
+    SetMapValue(socket_headers_, "Authorization", "Bearer " + kBearerToken);
+    SetMapValue(socket_headers_, "x-hq-stk", "MQ==");
+    SetMapValue(socket_headers_, "Host", "api-quiz.hype.space");
+    SetMapValue(socket_headers_, "Connection", "Keep-Alive");
+    SetMapValue(socket_headers_, "Accept-Encoding", "gzip");
+    SetMapValue(socket_headers_, "User-Agent", "okhttp/3.8.0");
 }
 
 /**
@@ -104,6 +101,27 @@ void Mitm::ApplyHeaders(GetRequest &request, map<string, string> &headers) {
     for (auto i = headers.begin(); i != headers.end(); i++) {
         request.set(i->first, i->second);
     }
+}
+
+/**
+ * Parses the latest message from the socket and retrieves question and answer data
+ */
+void Mitm::ParseMessage(string &question_dest, string &answer1_dest, string &answer2_dest, string &answer3_dest) {
+    string question;
+    string answer1;
+    string answer2;
+    string answer3;
+    
+    ofxJSONElement json(latest_message_);
+    
+    if (question.empty()) {
+        return;
+    }
+    
+    question_dest = question;
+    answer1_dest = answer1;
+    answer2_dest = answer2;
+    answer3_dest = answer3;
 }
 
 /* GETTERS AND SETTERS */

@@ -47,7 +47,7 @@ import Foundation
     
     class func processMessage(message : String) {
         if (isQuestionData(message: message)) {
-            print("Received message: \(message)");
+            print("Received message: \(message)")
             self.latest_message = message
         }
     }
@@ -55,18 +55,18 @@ import Foundation
     
     @objc public class func connect() {
         // replace https:// with wss://
-        processUrl();
+        processUrl()
         
         var request : URLRequest = URLRequest(url: URL(string: url)!);
-        applyHeaders(request: &request);
+        applyHeaders(request: &request)
         
         // code derived from exampls:
         // https://github.com/tidwall/SwiftWebSocket
-        socket = WebSocket(request: request);
-        print("Attemping connection: \(url)");
+        socket = WebSocket(request: request)
+        print("Attemping connection: \(url)")
         
         socket.event.open = {
-            print("Opened connection \(self.url)");
+            print("Opened connection \(self.url)")
             self.connected = true
         }
         
@@ -75,13 +75,13 @@ import Foundation
         }
         
         socket.event.error = { error in
-            print("Encountered error: \(error)");
+            print("Encountered error: \(error)")
             self.connected = false
         }
         
         socket.event.message = { message in
             if let text = message as? String {
-                processMessage(message: text);
+                processMessage(message: text)
             }
         }
     }

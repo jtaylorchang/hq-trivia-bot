@@ -28,3 +28,7 @@ vector<string> GetMapValues(map<string, string> &map) {
     
     return values;
 }
+
+bool ApproxEquals(double first, double second) {
+    return fabs(first - second) < kDoubleThreshold;
+}
