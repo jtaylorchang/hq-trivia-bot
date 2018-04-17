@@ -10,30 +10,58 @@ import Foundation
     @objc public static var custom_header_values : [String] = []
     
     @objc public static var latest_message : String = ""
-    @objc public static var payload : String = ""
     
-    @objc public class func send() {
-        if (payload.isEmpty) {
-            print("No payload was chosen");
-            socket.send("no payload");
-        } else {
-            print("Attempting to send: \(payload)");
-            socket.send(payload);
-            payload = "";
+    /**
+     * Alter the provided URL to have proper web socket format
+     */
+    @objc class func processUrl() {
+        url = url.replacingOccurrences(of: "https://", with: "wss://");
+    }
+    
+    /**
+     * Check if the given message from the web socket was question data
+     *
+     * @param message the message from the socket
+     * @return if the message was question data
+     */
+    class func isQuestionData(message : String) -> Bool {
+        let isQuestion : Bool = false
+        
+        // Check if socket data is a question
+        
+        return isQuestion
+    }
+    
+    /**
+     * Apply the custom headers to the given URLRequest object passed by reference
+     *
+     * @param request the request object to apply headers to
+     */
+    class func applyHeaders(request : inout URLRequest) {
+        request.timeoutInterval = 5
+        
+        for i in 0 ..< custom_header_keys.count {
+            request.addValue(custom_header_values[i], forHTTPHeaderField: custom_header_keys[i])
         }
     }
     
+    class func processMessage(message : String) {
+        if (isQuestionData(message: message)) {
+            print("Received message: \(message)");
+            self.latest_message = message
+        }
+    }
+    
+    
     @objc public class func connect() {
         // replace https:// with wss://
+        processUrl();
+        
         var request : URLRequest = URLRequest(url: URL(string: url)!);
-        request.timeoutInterval = 5
-        request.addValue("iOS/1.3.2 b84", forHTTPHeaderField: "x-hq-client")
-        request.addValue("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMDk4MDUzLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEwMTEiLCJhdmF0YXJVcmwiOiJzMzovL2h5cGVzcGFjZS1xdWl6L2RlZmF1bHRfYXZhdGFycy9VbnRpdGxlZC0xXzAwMDRfZ29sZC5wbmciLCJ0b2tlbiI6bnVsbCwicm9sZXMiOltdLCJjbGllbnQiOiIiLCJndWVzdElkIjpudWxsLCJ2IjoxLCJpYXQiOjE1MTk1MTE5NTksImV4cCI6MTUyNzI4Nzk1OSwiaXNzIjoiaHlwZXF1aXovMSJ9.AoMWU1tj7w0KXYcrm0a8UwxjA0g_xuPehOAAMlPnWNY", forHTTPHeaderField: "Authorization")
-        request.addValue("MQ==", forHTTPHeaderField: "x-hq-stk")
-        request.addValue("api-quiz.hype.space", forHTTPHeaderField: "Host")
-        request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
-        request.addValue("gzip", forHTTPHeaderField: "Accept-Encoding")
-        request.addValue("okhttp/3.8.0", forHTTPHeaderField: "User-Agent")
+        applyHeaders(request: &request);
+        
+        // code derived from exampls:
+        // https://github.com/tidwall/SwiftWebSocket
         socket = WebSocket(request: request);
         print("Attemping connection: \(url)");
         
@@ -53,8 +81,7 @@ import Foundation
         
         socket.event.message = { message in
             if let text = message as? String {
-                print("Received message: \(text)");
-                self.latest_message = text
+                processMessage(message: text);
             }
         }
     }

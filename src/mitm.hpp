@@ -41,6 +41,11 @@ public:
     void SetupBroadcast(string url);
     
     /**
+     * Initializes the headers for the socket connection (handled in Swift)
+     */
+    void SetupSocket();
+    
+    /**
      * Connects to the HQ server, establishes a connection and saves the JSON result
      */
     void EmulatePhoneConnection();
@@ -80,6 +85,8 @@ public:
     string GetLatestMessage();
     void SetLatestMessage(string message);
     string GetSocketUrl();
+    
+    map<string, string> &GetSocketHeaders();
 };
 
 #endif /* mitm_hpp */

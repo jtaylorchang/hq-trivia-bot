@@ -22,6 +22,22 @@ void Mitm::SetupBroadcast(string url) {
 }
 
 /**
+ * Initializes the headers for the socket connection (handled in Swift)
+ */
+void Mitm::SetupSocket() {
+    
+    /*
+     request.addValue("iOS/1.3.2 b84", forHTTPHeaderField: "x-hq-client")
+     request.addValue("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMDk4MDUzLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEwMTEiLCJhdmF0YXJVcmwiOiJzMzovL2h5cGVzcGFjZS1xdWl6L2RlZmF1bHRfYXZhdGFycy9VbnRpdGxlZC0xXzAwMDRfZ29sZC5wbmciLCJ0b2tlbiI6bnVsbCwicm9sZXMiOltdLCJjbGllbnQiOiIiLCJndWVzdElkIjpudWxsLCJ2IjoxLCJpYXQiOjE1MTk1MTE5NTksImV4cCI6MTUyNzI4Nzk1OSwiaXNzIjoiaHlwZXF1aXovMSJ9.AoMWU1tj7w0KXYcrm0a8UwxjA0g_xuPehOAAMlPnWNY", forHTTPHeaderField: "Authorization")
+     request.addValue("MQ==", forHTTPHeaderField: "x-hq-stk")
+     request.addValue("api-quiz.hype.space", forHTTPHeaderField: "Host")
+     request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
+     request.addValue("gzip", forHTTPHeaderField: "Accept-Encoding")
+     request.addValue("okhttp/3.8.0", forHTTPHeaderField: "User-Agent")
+     */
+}
+
+/**
  * Connects to the HQ server, establishes a connection and returns the JSON result
  */
 void Mitm::EmulatePhoneConnection() {
@@ -110,4 +126,8 @@ void Mitm::SetLatestMessage(string message) {
 
 string Mitm::GetSocketUrl() {
     return socket_url_;
+}
+
+map<string, string> &Mitm::GetSocketHeaders() {
+    return socket_headers_;
 }

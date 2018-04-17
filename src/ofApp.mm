@@ -33,6 +33,8 @@ void ofApp::SetupMitm() {
     if (mitm_.GameIsActive()) {
         std::cout << "Game is active, preparing socket" << std::endl;
         mitm_.ExtractSocketUrl();
+        mitm_.SetupSocket();
+        
         SetupSwift();
     } else {
         std::cout << "Game is not active, try again later" << std::endl;
@@ -41,6 +43,8 @@ void ofApp::SetupMitm() {
 
 void ofApp::SetupSwift() {
     SocketHandler.url = @(mitm_.GetSocketUrl().c_str());
+    //SocketHandler.custom_header_keys = GetMapKeys(mitm_.GetSocketHeaders());
+    //SocketHandler.custom_header_values = GetMapValues(mitm_.GetSocketHeaders());
     [SocketHandler connect];
 }
 
@@ -59,10 +63,22 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    string latest_message = GetLatestMessage();
-    mitm_.SetConnected(SocketHandler.connected);
-    if (!latest_message.empty()) {
-        mitm_.SetLatestMessage(latest_message);
+    bool connected = SocketHandler.connected;
+    mitm_.SetConnected(connected);
+    
+    if (connected) {
+        string latest_message = GetLatestMessage();
+        
+        if (!latest_message.empty()) {
+            if (latest_message != mitm_.GetLatestMessage()) {
+                std::cout << "Received new message:" << std::endl;
+                std::cout << latest_message << std::endl;
+                
+                mitm_.SetLatestMessage(latest_message);
+                
+                // Search for values (Sleuth)
+            }
+        }
     }
 }
 
