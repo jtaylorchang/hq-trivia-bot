@@ -59,7 +59,7 @@ void Mitm::EmulatePhoneConnection() {
         std::cout << json_content << std::endl;
         
         ofxJSONElement json(json_content);
-        return json;
+        broadcast_json_ = json;
     } catch (const Poco::Exception &exception) {
         ofLogError("Mitm::EmulatePhoneConnection") << exception.displayText() << " " << exception.code();
     } catch (...) {
@@ -80,7 +80,8 @@ bool Mitm::GameIsActive() {
  * Pulls the socket url out of the broadcast object in the stream json
  */
 void Mitm::ExtractSocketUrl() {
-    socket_url_ = broadcast_json_["broadcast"]["socket"].asString();
+    socket_url_ = broadcast_json_["broadcast"]["socketUrl"].asString();
+    std::cout << "Extracted socket: " << socket_url_ << std::endl;
 }
 
 /**
