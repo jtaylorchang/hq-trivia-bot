@@ -67,6 +67,8 @@ public:
      */
     void ExtractSocketUrl();
     
+    /* HEADERS */
+    
     /**
      * Sets headers that apply to both the broadcast and the socket
      *
@@ -83,15 +85,24 @@ public:
      */
     void ApplyHeaders(GetRequest &request, map<string, string> &headers);
     
+    /* SOCKET CONNECTION */
+    
     /**
-     * Parses the latest message from the socket and retrieves question and answer data
+     * Parses the latest message from the given json and retrieves question and answer data
+     *
+     * @param json the json to parse
+     * @param question_dest the reference to the variables to store the question
+     * @param answers_dest the reference to the variables to store the answer choices
+     */
+    void ParseMessage(ofxJSONElement &json, string &question_dest, vector<string> &answers_dest);
+    
+    /**
+     * Uses the latest message from the socket to set the new question and answer values
      *
      * @param question_dest the reference to the variables to store the question
-     * @param answer1_dest the reference to the variables to store the first answer choice
-     * @param answer2_dest the reference to the variables to store the second answer choice
-     * @param answer3_dest the reference to the variables to store the third answer choice
+     * @param answers_dest the reference to the variables to store the answer choices
      */
-    void ParseMessage(string &question_dest, string &answer1_dest, string &answer2_dest, string &answer3_dest);
+    void UpdateFromMessage(string &question_dest, vector<string> &answers_dest);
     
     /* GETTERS AND SETTERS */
     

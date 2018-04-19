@@ -20,15 +20,20 @@ private:
     ofColor current_text_color_;
     
     string question_ = "How long does the\naverage game of HQ\nTrivia take to start?";
-    string answer1_ = "Two hours";
-    string answer2_ = "Ten years";
-    string answer3_ = "An eternity";
+    vector<string> answers_ = {
+        "Two hours",
+        "Ten years",
+        "An eternity"
+    };
     
-    /* DEFAULT VALUES */
+    /* DEFAULT VALUES BEFORE GAME STARTS */
     
-    double confidence1_ = 0.10;
-    double confidence2_ = 0.40;
-    double confidence3_ = 0.90;
+    vector<double> confidences_ = {
+        0.10,
+        0.40,
+        0.90
+    };
+    
     double min_confidence_ = 0.20;
     double max_confidence_ = 0.90;
 

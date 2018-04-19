@@ -1,5 +1,6 @@
 #include "ofApp.h"
 
+const int kAnswerCount = 3;
 const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&userId=USER_ID";
 
 /* GRAPHICS CONSTANTS AND MAGIC NUMBERS */
@@ -36,16 +37,8 @@ const ofRectangle kQuestionBox((kWidth - kQuestionRectWidth) / 2,
                                kQuestionRectPadding,
                                kQuestionRectWidth,
                                kQuestionRectHeight);
-const ofRectangle kAnswer1Box((kWidth - kAnswerRectWidth) / 2,
+const ofRectangle kAnswerBox((kWidth - kAnswerRectWidth) / 2,
                               kAnswerRectOffset,
-                              kAnswerRectWidth,
-                              kAnswerRectHeight);
-const ofRectangle kAnswer2Box((kWidth - kAnswerRectWidth) / 2,
-                              kAnswerRectOffset + kAnswerRectHeight + kAnswerRectPadding,
-                              kAnswerRectWidth,
-                              kAnswerRectHeight);
-const ofRectangle kAnswer3Box((kWidth - kAnswerRectWidth) / 2,
-                              kAnswerRectOffset + (kAnswerRectHeight + kAnswerRectPadding) * 2,
                               kAnswerRectWidth,
                               kAnswerRectHeight);
 
@@ -116,9 +109,9 @@ void ofApp::update(){
                 std::cout << latest_message << std::endl;
                 
                 mitm_.SetLatestMessage(latest_message);
-                mitm_.ParseMessage(question_, answer1_, answer2_, answer3_);
+                mitm_.UpdateFromMessage(question_, answers_);
                 
-                // Search for values (Sleuth)
+                // TODO: Search for values (Sleuth)
             }
         }
     }
@@ -169,45 +162,36 @@ void ofApp::UpdateAnswerColors(double confidence) {
  * Draw the answer options and confidence levels
  */
 void ofApp::DrawAnswers() {
-    ofSetColor(kOutlineColor);
-    ofSetLineWidth(kAnswerLineWidth);
-    ofNoFill();
-    
-    ofDrawRectRounded(kAnswer1Box, kAnswerRectRounding);
-    ofDrawRectRounded(kAnswer2Box, kAnswerRectRounding);
-    ofDrawRectRounded(kAnswer3Box, kAnswerRectRounding);
-    
-    ofFill();
-    
-    /* ANSWER 1 */
-    
-    UpdateAnswerColors(confidence1_);
-    
-    ofSetColor(current_shape_color_);
-    ofDrawRectRounded(kAnswer1Box.getX(), kAnswer1Box.getY(), (int) (kAnswer1Box.getWidth() * std::max(confidence1_, min_confidence_)), kAnswer1Box.getHeight(), kAnswerRectRounding);
-    
-    ofSetColor(current_text_color_);
-    DrawTextVerticalCenter(answer1_, cabin_, kAnswer1Box.getX() + kQuestionRectBorderWidth, kAnswer1Box.getY() + kAnswer1Box.getHeight() / 2);
-    
-    /* ANSWER 2 */
-    
-    UpdateAnswerColors(confidence2_);
-    
-    ofSetColor(current_shape_color_);
-    ofDrawRectRounded(kAnswer2Box.getX(), kAnswer2Box.getY(), (int) (kAnswer2Box.getWidth() * std::max(confidence2_, min_confidence_)), kAnswer2Box.getHeight(), kAnswerRectRounding);
-    
-    ofSetColor(current_text_color_);
-    DrawTextVerticalCenter(answer2_, cabin_, kAnswer2Box.getX() + kQuestionRectBorderWidth, kAnswer2Box.getY() + kAnswer1Box.getHeight() / 2);
-    
-    /* ANSWER 3*/
-    
-    UpdateAnswerColors(confidence3_);
-    
-    ofSetColor(current_shape_color_);
-    ofDrawRectRounded(kAnswer3Box.getX(), kAnswer3Box.getY(), (int) (kAnswer3Box.getWidth() * std::max(confidence3_, min_confidence_)), kAnswer3Box.getHeight(), kAnswerRectRounding);
-    
-    ofSetColor(current_text_color_);
-    DrawTextVerticalCenter(answer3_, cabin_, kAnswer3Box.getX() + kQuestionRectBorderWidth, kAnswer3Box.getY() + kAnswer1Box.getHeight() / 2);
+    for (int i = 0; i < kAnswerCount; i++) {
+        int y_offset = i * (kAnswerRectHeight + kAnswerRectPadding);
+        
+        ofSetColor(kOutlineColor);
+        ofSetLineWidth(kAnswerLineWidth);
+        ofNoFill();
+        
+        ofDrawRectRounded(kAnswerBox.getX(),
+                          kAnswerBox.getY() + y_offset,
+                          kAnswerBox.getWidth(),
+                          kAnswerBox.getHeight(),
+                          kAnswerRectRounding);
+        
+        ofFill();
+        
+        UpdateAnswerColors(confidences_[i]);
+        
+        ofSetColor(current_shape_color_);
+        ofDrawRectRounded(kAnswerBox.getX(),
+                          kAnswerBox.getY() + y_offset,
+                          (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_confidence_)),
+                          kAnswerBox.getHeight(),
+                          kAnswerRectRounding);
+        
+        ofSetColor(current_text_color_);
+        DrawTextVerticalCenter(answers_[i],
+                               cabin_,
+                               kAnswerBox.getX() + kQuestionRectBorderWidth,
+                               kAnswerBox.getY() + kAnswerBox.getHeight() / 2 + y_offset);
+    }
 }
 
 /**

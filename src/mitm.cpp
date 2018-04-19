@@ -1,5 +1,7 @@
 #include "mitm.hpp"
 
+const int kAnswerCount = 3;
+
 /* CONNECTIONS */
 
 /**
@@ -113,17 +115,17 @@ void Mitm::ApplyHeaders(GetRequest &request, map<string, string> &headers) {
 }
 
 /**
- * Parses the latest message from the socket and retrieves question and answer data
+ * Parses the latest message from the given json and retrieves question and answer data
  */
-void Mitm::ParseMessage(string &question_dest, string &answer1_dest, string &answer2_dest, string &answer3_dest) {
+void Mitm::ParseMessage(ofxJSONElement &json, string &question_dest, vector<string> &answers_dest) {
     string question;
-    string answer1;
-    string answer2;
-    string answer3;
+    vector<string> answers;
     
-    ofxJSONElement json(latest_message_);
-    
-    // TODO
+    question = json["question"].asString();
+    for (int i = 0; i < kAnswerCount; i++) {
+        // TODO
+        answers.push_back(json["answers"][i]["text"].asString());
+    }
     
     if (question.empty()) {
         // No question was received
@@ -131,9 +133,15 @@ void Mitm::ParseMessage(string &question_dest, string &answer1_dest, string &ans
     }
     
     question_dest = question;
-    answer1_dest = answer1;
-    answer2_dest = answer2;
-    answer3_dest = answer3;
+    answers_dest = answers;
+}
+
+/**
+ * Parses the latest message from the socket and retrieves question and answer data
+ */
+void Mitm::UpdateFromMessage(string &question_dest, vector<string> &answers_dest) {
+    ofxJSONElement json(latest_message_);
+    ParseMessage(json, question_dest, answers_dest);
 }
 
 /* GETTERS AND SETTERS */
