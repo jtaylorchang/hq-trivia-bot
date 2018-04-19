@@ -20,7 +20,7 @@ using ofx::HTTP::BaseResponse;
 class Mitm {
     
 private:
-    // Courtesy of creators of HQuack:
+    // Courtesy of creators of HQuack (rather than use my own bearer token)
     const string kUserId = "11664553";
     const string kBearerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExNjY0NTUzLCJ1c2VybmFtZSI6InRydW1wZnRxIiwiYXZhdGFyVXJsIjoiczM6Ly9oeXBlc3BhY2UtcXVpei9kZWZhdWx0X2F2YXRhcnMvVW50aXRsZWQtMV8wMDAxX2JsdWUucG5nIiwidG9rZW4iOm51bGwsInJvbGVzIjpbXSwiY2xpZW50IjoiIiwiZ3Vlc3RJZCI6bnVsbCwidiI6MSwiaWF0IjoxNTE5NTEyMTEyLCJleHAiOjE1MjcyODgxMTIsImlzcyI6Imh5cGVxdWl6LzEifQ.YxOrP_MnZTapJq5kZSmDd3MzG07W8ZeHcluI2l4cZWI";
     
@@ -33,6 +33,11 @@ private:
     ofxJSONElement broadcast_json_;
     
 public:
+    /**
+     * Initializes the headers that apply to both the broadcast and the socket
+     */
+    void SetupConstantHeaders();
+    
     /**
      * Initializes the headers and sets the given url for the Broadcast connection
      *
@@ -63,12 +68,12 @@ public:
     void ExtractSocketUrl();
     
     /**
-     * Accepts a url and formats it into socket format
+     * Sets headers that apply to both the broadcast and the socket
      *
-     * @param url the url to format
-     * @return the formatted url
+     * @param key the key of the header
+     * @param value the value of the header
      */
-    string ProcessSocketUrl(string url);
+    void SetConstantHeader(string key, string value);
     
     /**
      * Applys all the headers in a given header map to the given GetRequest

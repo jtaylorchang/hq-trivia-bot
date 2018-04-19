@@ -32,13 +32,12 @@
     - WebSocket
  */
 
+const int kWindowWidth = 354;
+const int kWindowHeight = 768;
+
 //========================================================================
 int main( ){
-	ofSetupOpenGL(354,768,OF_WINDOW);			// <-------- setup the GL context
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
+	ofSetupOpenGL(kWindowWidth, kWindowHeight, OF_WINDOW);
+    
 	ofRunApp(new ofApp());
-
 }

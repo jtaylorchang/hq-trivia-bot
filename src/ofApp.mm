@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&userId=USER_ID";
+
 /* GRAPHICS CONSTANTS AND MAGIC NUMBERS */
 
 const ofColor kWhiteColor(255, 255, 255);
@@ -47,8 +49,18 @@ const ofRectangle kAnswer3Box((kWidth - kAnswerRectWidth) / 2,
                               kAnswerRectWidth,
                               kAnswerRectHeight);
 
-string prepared_payload = "";
+/* SETUP */
 
+//--------------------------------------------------------------
+void ofApp::setup(){
+    SetupGui();
+    ofSetBackgroundColor(kBgColor);
+    SetupMitm();
+}
+
+/**
+ * Setup and load the gui resources like fonts and images
+ */
 void ofApp::SetupGui() {
     iphone_x_.load("images/iphone_x.png");
     iphone_x_connected_.load("images/iphone_x_cxn.png");
@@ -57,8 +69,13 @@ void ofApp::SetupGui() {
     cabin_bold_.load("fonts/Cabin-Bold.ttf", kBoldSize);
 }
 
+/**
+ * Setup the connection with HQ server using the MITM strategy
+ */
 void ofApp::SetupMitm() {
-    mitm_.SetupBroadcast("https://api-quiz.hype.space/shows/now?type=hq&userId=11664553");
+    mitm_.SetupConstantHeaders();
+    mitm_.SetupBroadcast(kBroadcastUrl);
+    
     mitm_.EmulatePhoneConnection();
     if (mitm_.GameIsActive()) {
         std::cout << "Game is active, preparing socket" << std::endl;
@@ -71,6 +88,9 @@ void ofApp::SetupMitm() {
     }
 }
 
+/**
+ * Setup the Swift socket connection code using values retrieved from MITM
+ */
 void ofApp::SetupSwift() {
     SocketHandler.url = @(mitm_.GetSocketUrl().c_str());
     
@@ -80,18 +100,7 @@ void ofApp::SetupSwift() {
     [SocketHandler connect];
 }
 
-string ofApp::GetLatestMessage() {
-    string value = string([SocketHandler.latest_message UTF8String]);
-    return value;
-}
-
-
-//--------------------------------------------------------------
-void ofApp::setup(){
-    SetupGui();
-    ofSetBackgroundColor(kBgColor);
-    SetupMitm();
-}
+/* UPDATE */
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -115,6 +124,16 @@ void ofApp::update(){
     }
 }
 
+/**
+ * Get the latest message from the Swift socket
+ */
+string ofApp::GetLatestMessage() {
+    string value = string([SocketHandler.latest_message UTF8String]);
+    return value;
+}
+
+/* UPDATE */
+
 //--------------------------------------------------------------
 void ofApp::draw(){
     DrawQuestion();
@@ -122,6 +141,9 @@ void ofApp::draw(){
     DrawStatusBar();
 }
 
+/**
+ * Draw the question and question background
+ */
 void ofApp::DrawQuestion() {
     ofSetColor(kWhiteColor);
     ofDrawRectRounded(kQuestionBox, kQuestionRectRounding);
@@ -130,6 +152,9 @@ void ofApp::DrawQuestion() {
     DrawTextCentered(question_, cabin_bold_, 0, kWidth / kQuestionOffsetFraction);
 }
 
+/**
+ * Modifies the color scheme for the following answer depending on confidence level
+ */
 void ofApp::UpdateAnswerColors(double confidence) {
     if (ApproxEquals(confidence, max_confidence_)) {
         current_shape_color_ = kCorrectColor;
@@ -140,6 +165,9 @@ void ofApp::UpdateAnswerColors(double confidence) {
     }
 }
 
+/**
+ * Draw the answer options and confidence levels
+ */
 void ofApp::DrawAnswers() {
     ofSetColor(kOutlineColor);
     ofSetLineWidth(kAnswerLineWidth);
@@ -182,6 +210,9 @@ void ofApp::DrawAnswers() {
     DrawTextVerticalCenter(answer3_, cabin_, kAnswer3Box.getX() + kQuestionRectBorderWidth, kAnswer3Box.getY() + kAnswer1Box.getHeight() / 2);
 }
 
+/**
+ * Draw the overlay with the status bar and frame
+ */
 void ofApp::DrawStatusBar() {
     ofSetColor(kWhiteColor);
     iphone_x_.update();
@@ -200,10 +231,33 @@ void ofApp::DrawTextCentered(string text, ofTrueTypeFont &font, int x, int y) {
     font.drawString(text, x + (kWidth - box.getWidth()) / 2, y + (kHeight - box.getHeight()) / 2);
 }
 
+/**
+ * Draw text vertically centered at the given x and y position
+ */
 void ofApp::DrawTextVerticalCenter(string text, ofTrueTypeFont &font, int x, int y) {
     ofRectangle box = font.getStringBoundingBox(text, x, y);
     font.drawString(text, x, y + box.getHeight() / 2);
 }
+
+/* OBJ-C++ UTILITIES */
+
+/**
+ * Converts a vector of strings from C++ to an array of NSStrings in Objective-C
+ */
+id ofApp::ConvertStringVector(vector<string> string_vector) {
+    // code derived from:
+    // https://gist.github.com/jeremy-w/3777700
+    id nsstring_array = [NSMutableArray new];
+    
+    for (string current_string : string_vector) {
+        id nsstring = [NSString stringWithUTF8String:current_string.c_str()];
+        [nsstring_array addObject:nsstring];
+    }
+    
+    return nsstring_array;
+}
+
+/* EVENTS */
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
@@ -258,20 +312,4 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
-}
-
-/**
- * Converts a vector of strings from C++ to an array of NSStrings in Objective-C
- */
-id ofApp::ConvertStringVector(vector<string> string_vector) {
-    // code derived from:
-    // https://gist.github.com/jeremy-w/3777700
-    id nsstring_array = [NSMutableArray new];
-    
-    for (string current_string : string_vector) {
-        id nsstring = [NSString stringWithUTF8String:current_string.c_str()];
-        [nsstring_array addObject:nsstring];
-    }
-    
-    return nsstring_array;
 }

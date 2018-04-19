@@ -3,19 +3,27 @@
 /* CONNECTIONS */
 
 /**
+ * Initializes the headers that apply to both the broadcast and the socket
+ */
+void Mitm::SetupConstantHeaders() {
+    std::cout << "Setting cross headers" << std::endl;
+    
+    SetConstantHeader("x-hq-client", "iOS/1.3.2 b84");
+    SetConstantHeader("Authorization", "Bearer " + kBearerToken);
+    SetConstantHeader("x-hq-stk", "MQ==");
+    SetConstantHeader("Host", "api-quiz.hype.space");
+}
+
+/**
  * Initializes the headers and sets the given url for the Broadcast connection
  */
 void Mitm::SetupBroadcast(string url) {
     std::cout << "Preparing connection to: " << url << std::endl;
+    
+    url_ = Replace(url, "USER_ID", kUserId);
+    std::cout << "Updated url with user ID: " << url_ << std::endl;
     std::cout << "Setting broadcast headers, user ID, bearer token" << std::endl;
     
-    url_ = url;
-    //std::replace(url_, "USER_ID", kUserId);
-    SetMapValue(broadcast_headers_, "x-hq-client", "iOS/1.3.2 b84");
-    SetMapValue(broadcast_headers_, "Authorization", "Bearer " + kBearerToken);
-    SetMapValue(broadcast_headers_, "x-hq-stk", "MQ==");
-    SetMapValue(broadcast_headers_, "Host", "api-quiz.hype.space");
-    //SetMapValue(broadcast_headers_, "Connection", "Keep-Alive");
     SetMapValue(broadcast_headers_, "Accept", "*/*");
     SetMapValue(broadcast_headers_, "User-Agent", "HQ/84 CFNetwork/897.15 Darwin/17.5.0");
     SetMapValue(broadcast_headers_, "Accept-Language", "en-us");
@@ -25,10 +33,8 @@ void Mitm::SetupBroadcast(string url) {
  * Initializes the headers for the socket connection (handled in Swift)
  */
 void Mitm::SetupSocket() {
-    SetMapValue(socket_headers_, "x-hq-client", "iOS/1.3.2 b84");
-    SetMapValue(socket_headers_, "Authorization", "Bearer " + kBearerToken);
-    SetMapValue(socket_headers_, "x-hq-stk", "MQ==");
-    SetMapValue(socket_headers_, "Host", "api-quiz.hype.space");
+    std::cout << "Preparing socket headers" << std::endl;
+    
     SetMapValue(socket_headers_, "Connection", "Keep-Alive");
     SetMapValue(socket_headers_, "Accept-Encoding", "gzip");
     SetMapValue(socket_headers_, "User-Agent", "okhttp/3.8.0");
@@ -47,7 +53,7 @@ void Mitm::EmulatePhoneConnection() {
     
     ApplyHeaders(request, broadcast_headers_);
     
-    // code derived from ofxHTTP example code by Christopher Baker
+    // code based on example code for ofxHTTP library by Christopher Baker
     // https://github.com/bakercp/ofxHTTP
     try {
         string json_content;
@@ -81,19 +87,21 @@ bool Mitm::GameIsActive() {
  */
 void Mitm::ExtractSocketUrl() {
     socket_url_ = broadcast_json_["broadcast"]["socketUrl"].asString();
-    std::cout << "Extracted socket: " << socket_url_ << std::endl;
-}
-
-/**
- * Accepts a url and formats it into socket format
- */
-string Mitm::ProcessSocketUrl(string url) {
-    string socket_url = url;
-    //std::replace(socket_url.begin(), socket_url.end(), "https", "wss");
-    return socket_url;
+    std::cout << "Extracted unfiltered socket: " << socket_url_ << std::endl;
+    
+    socket_url_ = Replace(socket_url_, "https://", "wss://");
+    std::cout << "Filtered socket: " << socket_url_ << std::endl;
 }
 
 /* HEADERS */
+
+/**
+ * Sets headers that apply to both the broadcast and the socket
+ */
+void Mitm::SetConstantHeader(string key, string value) {
+    SetMapValue(broadcast_headers_, key, value);
+    SetMapValue(socket_headers_, key, value);
+}
 
 /**
  * Applys all the headers in a given header map to the given GetRequest
@@ -115,7 +123,10 @@ void Mitm::ParseMessage(string &question_dest, string &answer1_dest, string &ans
     
     ofxJSONElement json(latest_message_);
     
+    // TODO
+    
     if (question.empty()) {
+        // No question was received
         return;
     }
     
