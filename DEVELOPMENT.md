@@ -7,7 +7,7 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Objective-C++ to Swift bridge (requires conversion to .mm files for OpenFrameworks)
 - [x] Gather data on appropriate headers using MITM
 - [x] Send http request to HQ to get socket url
-- [ ] Connect to socket and send question JSON back to C++ code
+- [x] Connect to socket and send question JSON back to C++ code
 
 ## Week 2 - (April 17 - April 24)
 - [ ] Get JSON search results using Google Custom Search REST API
@@ -20,3 +20,4 @@ A (somewhat) flexible order of events and ideal deadlines
 - [ ] Question categories change the way the searches work
 - [ ] Accept data over commandline arguments
 - [ ] Automatic accuracy testing with question bank
+- [ ] Update README.md to have final project information
