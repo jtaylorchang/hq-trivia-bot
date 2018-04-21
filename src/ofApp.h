@@ -7,10 +7,14 @@
 #import "Holmes-Swift.h"
 
 using std::string;
+using std::cout;
+using std::endl;
 
 class ofApp : public ofBaseApp{
     
 private:
+    vector<string> args_;
+    
     ofImage iphone_x_;
     ofImage iphone_x_connected_;
     ofTrueTypeFont cabin_;
@@ -19,7 +23,7 @@ private:
     ofColor current_shape_color_;
     ofColor current_text_color_;
     
-    string question_ = "How long does the\naverage game of HQ\nTrivia take to start?";
+    string question_ = "How long does the average game of HQ Trivia take to start?";
     vector<string> answers_ = {
         "Two hours",
         "Ten years",
@@ -36,10 +40,22 @@ private:
     
     double min_confidence_ = 0.20;
     double max_confidence_ = 0.90;
+    
+    bool using_socket_ = true;
 
 public:
     /* SETUP */
     void setup();
+    
+    /**
+     * Process the command line arguments
+     */
+    void ProcessArguments();
+    
+    /**
+     * Print and process the command line arguments if there are any
+     */
+    void SetupArguments();
     
     /**
      * Setup and load the gui resources like fonts and images
@@ -99,7 +115,17 @@ public:
      * @param x the x offset
      * @param y the y offset
      */
-    void DrawTextCentered(string text, ofTrueTypeFont &font, int x, int y);
+    void DrawTextScreenCentered(string text, ofTrueTypeFont &font, int x, int y);
+    
+    /**
+     * Draw text centered at the given x and y position
+     *
+     * @param text the text to draw
+     * @param font the font to use
+     * @param x the x offset
+     * @param y the y value to center around
+     */
+    void DrawTextPointCentered(string text, ofTrueTypeFont &font, int x, int y);
     
     /**
      * Draw text vertically centered at the given x and y position
@@ -110,7 +136,7 @@ public:
      * @param y the y value to center around
      */
     void DrawTextVerticalCenter(string text, ofTrueTypeFont &font, int x, int y);
-
+    
     /* OBJ-C++ UTILITIES */
     
     /**
@@ -134,5 +160,9 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    
+    /* GETTERS AND SETTERS */
+    
+    void SetArgs(vector<string> args);
 		
 };

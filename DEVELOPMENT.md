@@ -11,6 +11,7 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Render basic GUI in OpenFrameworks
 
 ## Week 2 - (April 17 - April 24)
+- [x] Accept data over commandline arguments
 - [ ] Get JSON search results using Google Custom Search REST API
 - [ ] Generate a weighting for each answer
 - [ ] Try to distribute searches over multiple API's
@@ -19,6 +20,5 @@ A (somewhat) flexible order of events and ideal deadlines
 ## Week 3 - (April 24 - May 1)
 - [ ] More complex weighting using multiple sources like Wikipedia
 - [ ] Question categories change the way the searches work
-- [ ] Accept data over commandline arguments
 - [ ] Automatic accuracy testing with question bank
 - [ ] Update README.md to have final project information

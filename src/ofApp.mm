@@ -5,6 +5,10 @@ const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&user
 
 /* GRAPHICS CONSTANTS AND MAGIC NUMBERS */
 
+const int kMinArgCount = 3;
+const int kQuestionArgIndex = 0;
+const int kQuestionLineWidth = 18;
+
 const ofColor kWhiteColor(255, 255, 255);
 const ofColor kBgColor(71, 73, 160);
 const ofColor kOutlineColor(227, 227, 227);
@@ -13,10 +17,12 @@ const ofColor kCorrectColor(81, 201, 148);
 
 const int kWidth = 354;
 const int kHeight = 768;
+
 const int kBoldSize = 18;
 const int kRegularSize = 14;
 
-const int kQuestionOffsetFraction = -3;
+const int kQuestionPointX = kWidth / 2;
+const int kQuestionPointY = (kHeight * 2) / 7;
 const int kQuestionRectBorderWidth = 20;
 const int kQuestionRectOffset = kHeight / 10;
 const int kQuestionRectPadding = kHeight / 16;
@@ -46,15 +52,51 @@ const ofRectangle kAnswerBox((kWidth - kAnswerRectWidth) / 2,
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    SetupArguments();
     SetupGui();
-    ofSetBackgroundColor(kBgColor);
-    SetupMitm();
+    
+    if (using_socket_) {
+        SetupMitm();
+    }
+}
+
+void ofApp::ProcessArguments() {
+    question_ = args_[kQuestionArgIndex];
+    
+    for (int i = 0; i < kAnswerCount; i++) {
+        answers_[i] = args_[i + 1];
+    }
+    
+    using_socket_ = false;
+}
+
+/**
+ * Setup and process the command line arguments if there are any
+ */
+void ofApp::SetupArguments() {
+    cout << "Apply command line arguments [" << args_.size() << "]" << endl;
+    
+    if (args_.size() >= kMinArgCount) {
+        // Print out the arguments
+        for (string arg : args_) {
+            cout << " :" << arg << endl;
+        }
+        
+        // Process the arguments
+        ProcessArguments();
+    } else if (args_.size() > 0) {
+        cout << "Wrong number of arguments" << endl;
+    }
+    
+    question_ = BreakIntoLines(question_, kQuestionLineWidth);
 }
 
 /**
  * Setup and load the gui resources like fonts and images
  */
 void ofApp::SetupGui() {
+    ofSetBackgroundColor(kBgColor);
+    
     iphone_x_.load("images/iphone_x.png");
     iphone_x_connected_.load("images/iphone_x_cxn.png");
     
@@ -71,13 +113,13 @@ void ofApp::SetupMitm() {
     
     mitm_.EmulatePhoneConnection();
     if (mitm_.GameIsActive()) {
-        std::cout << "Game is active, preparing socket" << std::endl;
+        cout << "Game is active, preparing socket" << endl;
         mitm_.ExtractSocketUrl();
         mitm_.SetupSocket();
         
         SetupSwift();
     } else {
-        std::cout << "Game is not active, try again later" << std::endl;
+        cout << "Game is not active, try again later" << endl;
     }
 }
 
@@ -105,8 +147,8 @@ void ofApp::update(){
         
         if (!latest_message.empty()) {
             if (latest_message != mitm_.GetLatestMessage()) {
-                std::cout << "Received new message:" << std::endl;
-                std::cout << latest_message << std::endl;
+                cout << "Received new message:" << endl;
+                cout << latest_message << endl;
                 
                 mitm_.SetLatestMessage(latest_message);
                 mitm_.UpdateFromMessage(question_, answers_);
@@ -142,7 +184,7 @@ void ofApp::DrawQuestion() {
     ofDrawRectRounded(kQuestionBox, kQuestionRectRounding);
     
     ofSetColor(kTextColor);
-    DrawTextCentered(question_, cabin_bold_, 0, kWidth / kQuestionOffsetFraction);
+    DrawTextPointCentered(question_, cabin_bold_, kQuestionPointX, kQuestionPointY);
 }
 
 /**
@@ -210,9 +252,17 @@ void ofApp::DrawStatusBar() {
 /**
  * Draw text centered with the given font and given offsets
  */
-void ofApp::DrawTextCentered(string text, ofTrueTypeFont &font, int x, int y) {
+void ofApp::DrawTextScreenCentered(string text, ofTrueTypeFont &font, int x, int y) {
     ofRectangle box = font.getStringBoundingBox(text, x, y);
     font.drawString(text, x + (kWidth - box.getWidth()) / 2, y + (kHeight - box.getHeight()) / 2);
+}
+
+/**
+ * Draw text centered at the given x and y position
+ */
+void ofApp::DrawTextPointCentered(string text, ofTrueTypeFont &font, int x, int y) {
+    ofRectangle box = font.getStringBoundingBox(text, x, y);
+    font.drawString(text, x - box.getWidth() / 2, y - box.getHeight() / 2);
 }
 
 /**
@@ -296,4 +346,10 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+/* GETTERS AND SETTERS */
+
+void ofApp::SetArgs(vector<string> args) {
+    args_ = args;
 }

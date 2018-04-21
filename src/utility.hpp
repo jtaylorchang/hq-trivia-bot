@@ -64,4 +64,31 @@ bool ApproxEquals(double first, double second);
  */
 string Replace(string source, string old_value, string new_value);
 
+/**
+ * Split a string into a vector of strings divided by the given delimiter
+ *
+ * @param input the full string
+ * @param delimiter the char to split by
+ * @return the vector of strings
+ */
+vector<string> Split(std::string input, char delimiter);
+
+/**
+ * Breaks a long sentence into multiple lines with given character size
+ *
+ * @param source the string to break
+ * @param line_width the desired line width
+ * @return the broken string
+ */
+string BreakIntoLines(string source, int line_width);
+
+/**
+ * Counts the number of occurrences of a char in a string
+ *
+ * @param source the string to search in
+ * @param search_char the char to search for
+ * @return an integer count number
+ */
+int Count(string source, char search_char);
+
 #endif /* utility_hpp */

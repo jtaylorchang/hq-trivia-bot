@@ -6,7 +6,6 @@
 //
 
 #include "utility.hpp"
-#include <iostream>
 
 /**
  * Set a key and value pair in a given map
@@ -60,4 +59,59 @@ string Replace(string source, string old_value, string new_value) {
     }
     
     return new_string;
+}
+
+/**
+ * Split a string into a vector of strings divided by the given delimiter
+ */
+vector<string> Split(string input, char delimiter) {
+    vector<string> elements;
+    string current_element;
+    
+    for (const char character : input) {
+        if (character == delimiter) {
+            // Found a new word delimiter
+            if (!current_element.empty()) {
+                elements.push_back(current_element);
+                current_element.clear();
+            }
+        } else {
+            current_element += character;
+        }
+    }
+    
+    if (!current_element.empty()) {
+        elements.push_back(current_element);
+    }
+    return elements;
+}
+
+/**
+ * Breaks a long sentence into multiple lines with given character size
+ */
+string BreakIntoLines(string source, int line_width) {
+    string broken_word;
+    vector<string> words = Split(source, ' ');
+    
+    int count = 0;
+    for (string word : words) {
+        broken_word.append(word);
+        broken_word.append(" ");
+        
+        count += word.length() + 1;
+        if (count >= line_width) {
+            broken_word.append("\n");
+            count = 0;
+        }
+    }
+    
+    return broken_word;
+}
+
+/**
+ * Counts the number of occurrences of a char in a string
+ */
+int Count(string source, char search_char) {
+    std::size_t count = std::count(source.begin(), source.end(), search_char);
+    return static_cast<int>(count);
 }

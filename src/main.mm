@@ -32,12 +32,34 @@
     - WebSocket
  */
 
+using std::string;
+using std::vector;
+
 const int kWindowWidth = 354;
 const int kWindowHeight = 768;
 
+/**
+ * Create a vector from command line arguments
+ *
+ * @param argc the argument count
+ * @param argv the argument array
+ */
+vector<string> ProcessArgs(int argc, char *argv[]) {
+    vector<string> args;
+    
+    for (int i = 1; i < argc; i++) {
+        args.push_back(argv[i]);
+    }
+    
+    return args;
+}
+
 //========================================================================
-int main( ){
+int main(int argc, char *argv[]){
 	ofSetupOpenGL(kWindowWidth, kWindowHeight, OF_WINDOW);
     
-	ofRunApp(new ofApp());
+    ofApp *holmes = new ofApp();
+    holmes->SetArgs(ProcessArgs(argc, argv));
+    
+	ofRunApp(holmes);
 }

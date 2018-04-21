@@ -12,6 +12,8 @@
 using std::string;
 using std::vector;
 using std::map;
+using std::cout;
+using std::endl;
 using ofx::HTTP::GetRequest;
 using ofx::HTTP::DefaultClient;
 using ofx::HTTP::Context;

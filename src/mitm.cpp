@@ -8,7 +8,7 @@ const int kAnswerCount = 3;
  * Initializes the headers that apply to both the broadcast and the socket
  */
 void Mitm::SetupConstantHeaders() {
-    std::cout << "Setting cross headers" << std::endl;
+    cout << "Setting cross headers" << endl;
     
     SetConstantHeader("x-hq-client", "iOS/1.3.2 b84");
     SetConstantHeader("Authorization", "Bearer " + kBearerToken);
@@ -20,11 +20,11 @@ void Mitm::SetupConstantHeaders() {
  * Initializes the headers and sets the given url for the Broadcast connection
  */
 void Mitm::SetupBroadcast(string url) {
-    std::cout << "Preparing connection to: " << url << std::endl;
+    cout << "Preparing connection to: " << url << endl;
     
     url_ = Replace(url, "USER_ID", kUserId);
-    std::cout << "Updated url with user ID: " << url_ << std::endl;
-    std::cout << "Setting broadcast headers, user ID, bearer token" << std::endl;
+    cout << "Updated url with user ID: " << url_ << endl;
+    cout << "Setting broadcast headers, user ID, bearer token" << endl;
     
     SetMapValue(broadcast_headers_, "Accept", "*/*");
     SetMapValue(broadcast_headers_, "User-Agent", "HQ/84 CFNetwork/897.15 Darwin/17.5.0");
@@ -35,7 +35,7 @@ void Mitm::SetupBroadcast(string url) {
  * Initializes the headers for the socket connection (handled in Swift)
  */
 void Mitm::SetupSocket() {
-    std::cout << "Preparing socket headers" << std::endl;
+    cout << "Preparing socket headers" << endl;
     
     SetMapValue(socket_headers_, "Connection", "Keep-Alive");
     SetMapValue(socket_headers_, "Accept-Encoding", "gzip");
@@ -46,7 +46,7 @@ void Mitm::SetupSocket() {
  * Connects to the HQ server, establishes a connection and returns the JSON result
  */
 void Mitm::EmulatePhoneConnection() {
-    std::cout << "Emulating HQ client connection" << std::endl;
+    cout << "Emulating HQ client connection" << endl;
     
     DefaultClient client;
     Context context;
@@ -63,8 +63,8 @@ void Mitm::EmulatePhoneConnection() {
         std::istream &response_stream = client.execute(request, response, context);
         Poco::StreamCopier::copyToString(response_stream, json_content);
         
-        std::cout << "Received JSON content:" << std::endl;
-        std::cout << json_content << std::endl;
+        cout << "Received JSON content:" << endl;
+        cout << json_content << endl;
         
         ofxJSONElement json(json_content);
         broadcast_json_ = json;
@@ -89,10 +89,10 @@ bool Mitm::GameIsActive() {
  */
 void Mitm::ExtractSocketUrl() {
     socket_url_ = broadcast_json_["broadcast"]["socketUrl"].asString();
-    std::cout << "Extracted unfiltered socket: " << socket_url_ << std::endl;
+    cout << "Extracted unfiltered socket: " << socket_url_ << endl;
     
     socket_url_ = Replace(socket_url_, "https://", "wss://");
-    std::cout << "Filtered socket: " << socket_url_ << std::endl;
+    cout << "Filtered socket: " << socket_url_ << endl;
 }
 
 /* HEADERS */
