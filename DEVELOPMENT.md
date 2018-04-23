@@ -14,11 +14,12 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Accept data over commandline arguments
 - [ ] Get JSON search results using Google Custom Search REST API
 - [ ] Generate a weighting for each answer
-- [ ] Try to distribute searches over multiple API's
-- [ ] Render results as GUI
+- [x] Try to distribute searches over multiple API's
+- [x] Improve rendering of results as GUI
 
 ## Week 3 - (April 24 - May 1)
 - [ ] More complex weighting using multiple sources like Wikipedia
 - [ ] Question categories change the way the searches work
 - [ ] Automatic accuracy testing with question bank
-- [ ] Update README.md to have final project information
+- [ ] Update README.md to have final project information and how-to guide
+- [ ] Record live game (?)

@@ -96,12 +96,15 @@ string BreakIntoLines(string source, int line_width) {
     int count = 0;
     for (string word : words) {
         broken_word.append(word);
-        broken_word.append(" ");
         
-        count += word.length() + 1;
         if (count >= line_width) {
+            // Break to next line
             broken_word.append("\n");
             count = 0;
+        } else {
+            // Add a space between words
+            broken_word.append(" ");
+            count += word.length() + 1;
         }
     }
     
