@@ -11,11 +11,12 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Render basic GUI in OpenFrameworks
 
 ## Week 2 - (April 17 - April 24)
-- [x] Accept data over commandline arguments
 - [ ] Get JSON search results using Google Custom Search REST API
 - [ ] Generate a weighting for each answer
 - [x] Try to distribute searches over multiple API's
 - [x] Improve rendering of results as GUI
+- [x] Accept data over commandline arguments
+- [x] Create shell script to run command line questions
 
 ## Week 3 - (April 24 - May 1)
 - [ ] More complex weighting using multiple sources like Wikipedia

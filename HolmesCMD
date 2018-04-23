@@ -1,0 +1,30 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    echo "Enter the question:"
+    read question
+    
+    echo ""
+    echo "Enter the first answer:"
+    read answer1
+
+    echo ""
+    echo "Enter the second answer:"
+    read answer2
+
+    echo ""
+    echo "Enter the third answer:"
+    read answer3
+
+    ./Holmes "$question" "$answer1" "$answer2" "$answer3"
+}
+
+switchdir
+run

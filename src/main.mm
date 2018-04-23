@@ -55,7 +55,7 @@ vector<string> ProcessArgs(int argc, char *argv[]) {
 }
 
 //========================================================================
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	ofSetupOpenGL(kWindowWidth, kWindowHeight, OF_WINDOW);
     
     ofApp *holmes = new ofApp();

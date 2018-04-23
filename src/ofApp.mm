@@ -60,7 +60,11 @@ void ofApp::setup(){
     }
 }
 
+/**
+ * Process the command line arguments
+ */
 void ofApp::ProcessArguments() {
+    cout << "Processing commandline arguments" << endl;
     question_ = args_[kQuestionArgIndex];
     
     for (int i = 0; i < kAnswerCount; i++) {
@@ -68,6 +72,10 @@ void ofApp::ProcessArguments() {
     }
     
     using_socket_ = false;
+    found_answer_ = false;
+    answering_ = false;
+    
+    ResetConfidences();
 }
 
 /**
@@ -108,6 +116,8 @@ void ofApp::SetupGui() {
  * Setup the connection with HQ server using the MITM strategy
  */
 void ofApp::SetupMitm() {
+    cout << "Setting up MITM" << endl;
+    
     mitm_.SetupConstantHeaders();
     mitm_.SetupBroadcast(kBroadcastUrl);
     
@@ -127,6 +137,8 @@ void ofApp::SetupMitm() {
  * Setup the Swift socket connection code using values retrieved from MITM
  */
 void ofApp::SetupSwift() {
+    cout << "Setting up Swift bridge" << endl;
+    
     SocketHandler.url = @(mitm_.GetSocketUrl().c_str());
     
     SocketHandler.custom_header_keys = ConvertStringVector(GetMapKeys(mitm_.GetSocketHeaders()));
@@ -138,7 +150,17 @@ void ofApp::SetupSwift() {
 /* UPDATE */
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
+    if (using_socket_) {
+        UpdateSocket();
+    }
+    
+    if (!found_answer_ && !answering_) {
+        AnswerQuestion();
+    }
+}
+
+void ofApp::UpdateSocket() {
     bool connected = SocketHandler.connected;
     mitm_.SetConnected(connected);
     
@@ -153,7 +175,7 @@ void ofApp::update(){
                 mitm_.SetLatestMessage(latest_message);
                 mitm_.UpdateFromMessage(question_, answers_);
                 
-                // TODO: Search for values (Sleuth)
+                ResetConfidences();
             }
         }
     }
@@ -165,6 +187,27 @@ void ofApp::update(){
 string ofApp::GetLatestMessage() {
     string value = string([SocketHandler.latest_message UTF8String]);
     return value;
+}
+
+/**
+ * Find the answer to the given question
+ */
+void ofApp::AnswerQuestion() {
+    cout << "Answering current question" << endl;
+    answering_ = true;
+    
+    // TODO
+}
+
+/**
+ * Reset the confidence levels for the answers
+ */
+void ofApp::ResetConfidences() {
+    cout << "Resetting confidence levels" << endl;
+    
+    for (int i = 0; i < kAnswerCount; i++) {
+        confidences_[i] = min_confidence_;
+    }
 }
 
 /* UPDATE */
@@ -207,6 +250,7 @@ void ofApp::DrawAnswers() {
     for (int i = 0; i < kAnswerCount; i++) {
         int y_offset = i * (kAnswerRectHeight + kAnswerRectPadding);
         
+        // Render the outlines of the answer boxes
         ofSetColor(kOutlineColor);
         ofSetLineWidth(kAnswerLineWidth);
         ofNoFill();
@@ -217,6 +261,7 @@ void ofApp::DrawAnswers() {
                           kAnswerBox.getHeight(),
                           kAnswerRectRounding);
         
+        // Render the backgrounds of the answer boxes
         ofFill();
         
         UpdateAnswerColors(confidences_[i]);
@@ -228,6 +273,7 @@ void ofApp::DrawAnswers() {
                           kAnswerBox.getHeight(),
                           kAnswerRectRounding);
         
+        // Render the answer text
         ofSetColor(current_text_color_);
         DrawTextVerticalCenter(answers_[i],
                                cabin_,
@@ -241,7 +287,7 @@ void ofApp::DrawAnswers() {
  */
 void ofApp::DrawStatusBar() {
     ofSetColor(kWhiteColor);
-    iphone_x_.update();
+    
     if (mitm_.IsConnected()) {
         iphone_x_connected_.draw(0, 0, kWidth, kHeight);
     } else {
@@ -294,59 +340,42 @@ id ofApp::ConvertStringVector(vector<string> string_vector) {
 /* EVENTS */
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    
+void ofApp::keyPressed(int key) {}
+
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key) {}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y) {}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button) {}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button) {}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button) {}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y) {}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y) {}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h) {
+    if (w != kWidth || h != kHeight) {
+        // Prevent window resizing
+        ofSetWindowShape(kWidth, kHeight);
+    }
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
+void ofApp::gotMessage(ofMessage msg) {}
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
+void ofApp::dragEvent(ofDragInfo dragInfo) {}
 
 /* GETTERS AND SETTERS */
 

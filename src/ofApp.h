@@ -32,15 +32,23 @@ private:
     
     /* DEFAULT VALUES BEFORE GAME STARTS */
     
+    // Arbitrarily chosen confidence levels just to show default working
     vector<double> confidences_ = {
         0.10,
         0.40,
         0.90
     };
     
+    bool answering_ = false;
+    bool found_answer_ = true;
+    
+    // Minimum confidence that the confidence bar will render accurately
     double min_confidence_ = 0.20;
+    
+    // Current max confidence (should equal the largest value in the vector)
     double max_confidence_ = 0.90;
     
+    // Using a socket connection vs command line
     bool using_socket_ = true;
 
 public:
@@ -75,12 +83,24 @@ public:
     /* UPDATE */
     void update();
     
+    void UpdateSocket();
+    
     /**
      * Get the latest message from the Swift socket
      *
      * @return the latest message converted from NSString to std::string
      */
     string GetLatestMessage();
+    
+    /**
+     * Find the answer to the given question
+     */
+    void AnswerQuestion();
+    
+    /**
+     * Reset the confidence levels for the answers
+     */
+    void ResetConfidences();
     
     /* DRAW */
     void draw();
@@ -151,7 +171,7 @@ public:
     
     void keyPressed(int key);
     void keyReleased(int key);
-    void mouseMoved(int x, int y );
+    void mouseMoved(int x, int y);
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
