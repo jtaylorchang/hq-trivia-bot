@@ -25,10 +25,63 @@ SearchCred &ChooseCredentials() {
 }
 
 /**
- * Get a vector of confidence levels for the given answers to the question
+ * Receive the response from the urlResponse event
  */
-vector<double> Investigate(string question, vector<string> answers) {
-    vector<double> confidences;
+void ReceiveResponse(ofHttpResponse &response, vector<double> &confidences) {
+    cout << "Received response in Sleuth" << endl;
     
-    return confidences;
+    ofxJSONElement json = LoadSearchResults(response.data.getText());
+    ProcessBasic(json, confidences);
+}
+
+/**
+ * Get the JSON for Google CSE for the given query
+ */
+ofxJSONElement LoadSearchResults(string content) {
+    ofxJSONElement json (content);
+    return json;
+}
+
+/**
+ * Strip the snippets from the given JSON data
+ */
+vector<string> StripSnippets(ofxJSONElement &json) {
+    vector<string> snippets;
+    
+    std::size_t size = json["items"].size();
+    for (Json::ArrayIndex i = 0; i < size; i++) {
+        snippets.push_back(json["items"][i]["title"].asString());
+        snippets.push_back(json["items"][i]["snippet"].asString());
+    }
+    
+    return snippets;
+}
+
+/**
+ * Increase confidence levels using the default search
+ */
+void SearchBasic(SearchCred &cred, string question, vector<string> answers) {
+    ofLoadURLAsync(cred.GetUrl(question));
+}
+
+/**
+ * Process the basic search JSON and update the confidence levels
+ */
+void ProcessBasic(ofxJSONElement &json, vector<double> &confidences) {
+    cout << "Processing basic search snippets:" << endl;
+    
+    vector<string> snippets = StripSnippets(json);
+    
+    for (string &snippet : snippets) {
+        cout << snippet << endl;
+    }
+}
+
+/**
+ * Start the JSON collection for the given question
+ */
+void Investigate(string question, vector<string> answers) {
+    SearchCred &credentials = ChooseCredentials();
+    
+    SearchBasic(credentials, question, answers);
 }

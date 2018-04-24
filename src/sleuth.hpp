@@ -5,9 +5,12 @@
 #include <string>
 #include <vector>
 #include "search_cred.hpp"
+#include "ofxJSON.h"
 
 using std::string;
 using std::vector;
+using std::cout;
+using std::endl;
 
 /**
  * Chooses a random set of credentials to use to distribute searches across multiple
@@ -17,12 +20,53 @@ using std::vector;
 SearchCred &ChooseCredentials();
 
 /**
- * Get a vector of confidence levels for the given answers to the question
+ * Receive the response from the urlResponse event
+ *
+ * @param response the response received
+ * @param confidences the confidence destination vector
+ */
+void ReceiveResponse(ofHttpResponse &response, vector<double> &confidences);
+
+/**
+ * Get the JSON for Google CSE for the given query
+ *
+ * @param cred the credentials to use
+ * @param query the text to search
+ * @return the JSON results
+ */
+ofxJSONElement LoadSearchResults(string content);
+
+/**
+ * Strip the snippets from the given JSON data
+ *
+ * @param json the json to process
+ * @return a vector of string snippets
+ */
+vector<string> StripSnippets(ofxJSONElement &json);
+
+/**
+ * Increase confidence levels using the default search
+ *
+ * @param cred the credentials to use
+ * @param question the question to search
+ * @param answers the possible answers
+ */
+void SearchBasic(SearchCred &cred, string question, vector<string> answers);
+
+/**
+ * Process the basic search JSON and update the confidence levels
+ *
+ * @param json the JSON to process
+ * @param confidences the confidence vector to update
+ */
+void ProcessBasic(ofxJSONElement &json, vector<double> &confidences);
+
+/**
+ * Start the JSON collection for the given question
  *
  * @param question the question to answer
  * @param answers the vector of possible answers
- * @return the vector of confidence levels
  */
-vector<double> Investigate(string question, vector<string> answers);
+void Investigate(string question, vector<string> answers);
 
 #endif /* sleuth_hpp */

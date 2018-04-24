@@ -1,5 +1,6 @@
 #include "ofApp.h"
 
+const int kHttpGood = 200;
 const int kAnswerCount = 3;
 const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&userId=USER_ID";
 
@@ -52,6 +53,8 @@ const ofRectangle kAnswerBox((kWidth - kAnswerRectWidth) / 2,
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofRegisterURLNotification(this);
+    
     SetupArguments();
     SetupGui();
     
@@ -120,8 +123,8 @@ void ofApp::SetupMitm() {
     
     mitm_.SetupConstantHeaders();
     mitm_.SetupBroadcast(kBroadcastUrl);
-    
     mitm_.EmulatePhoneConnection();
+    
     if (mitm_.GameIsActive()) {
         cout << "Game is active, preparing socket" << endl;
         mitm_.ExtractSocketUrl();
@@ -196,7 +199,9 @@ void ofApp::AnswerQuestion() {
     cout << "Answering current question" << endl;
     answering_ = true;
     
-    // TODO
+    Investigate(question_, answers_);
+    
+    // TODO: accept next question
 }
 
 /**
@@ -208,6 +213,8 @@ void ofApp::ResetConfidences() {
     for (int i = 0; i < kAnswerCount; i++) {
         confidences_[i] = min_confidence_;
     }
+    
+    max_confidence_ = 1.0;
 }
 
 /* UPDATE */
@@ -338,6 +345,21 @@ id ofApp::ConvertStringVector(vector<string> string_vector) {
 }
 
 /* EVENTS */
+
+/**
+ * Receive a response event from a URL async request
+ */
+void ofApp::urlResponse(ofHttpResponse &response) {
+    if (response.status == kHttpGood) {
+        cout << "Good async response" << endl;
+        //cout << response.data << endl;
+        
+        ReceiveResponse(response, confidences_);
+    } else {
+        cout << "Bad async response:" << endl;
+        cout << response.status << " " << response.error << endl;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {}

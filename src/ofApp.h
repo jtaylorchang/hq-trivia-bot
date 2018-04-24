@@ -169,6 +169,13 @@ public:
     
     /* EVENTS */
     
+    /**
+     * Receive a response event from a URL async request
+     *
+     * @param response the response from the request
+     */
+    void urlResponse(ofHttpResponse &response);
+    
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);

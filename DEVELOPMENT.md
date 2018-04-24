@@ -11,7 +11,7 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Render basic GUI in OpenFrameworks
 
 ## Week 2 - (April 17 - April 24)
-- [ ] Get JSON search results using Google Custom Search REST API
+- [x] Get JSON search results using Google Custom Search REST API
 - [ ] Generate a weighting for each answer
 - [x] Try to distribute searches over multiple API's
 - [x] Improve rendering of results as GUI
