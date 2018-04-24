@@ -9,6 +9,7 @@
 #define utility_hpp
 
 #include <stdio.h>
+#include <iostream>
 #include <math.h>
 #include <string>
 #include <vector>
@@ -17,6 +18,8 @@
 using std::string;
 using std::vector;
 using std::map;
+using std::cout;
+using std::endl;
 
 const double kDoubleThreshold = 0.01;
 
@@ -83,6 +86,14 @@ vector<string> Split(std::string input, char delimiter);
 string BreakIntoLines(string source, int line_width);
 
 /**
+ * Convert a string to lower case
+ *
+ * @param source the string to turn to lower case
+ * @return the lower case version
+ */
+string ToLowerCase(string source);
+
+/**
  * Counts the number of occurrences of a char in a string
  *
  * @param source the string to search in
@@ -90,5 +101,14 @@ string BreakIntoLines(string source, int line_width);
  * @return an integer count number
  */
 int Count(string source, char search_char);
+
+/**
+ * Counts the number of occurrences of a string in a larger string
+ *
+ * @param source the string to search in
+ * @param search_str the string to search for
+ * @return an integer count number
+ */
+int Count(string source, string search_str);
 
 #endif /* utility_hpp */

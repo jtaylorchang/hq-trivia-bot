@@ -27,11 +27,11 @@ SearchCred &ChooseCredentials() {
 /**
  * Receive the response from the urlResponse event
  */
-void ReceiveResponse(ofHttpResponse &response, vector<double> &confidences) {
-    cout << "Received response in Sleuth" << endl;
+void ReceiveResponse(ofHttpResponse &response, string question, vector<string> answers, vector<double> &confidences) {
+    cout << "Received response in Sleuth [ASYNC]" << endl;
     
     ofxJSONElement json = LoadSearchResults(response.data.getText());
-    ProcessBasic(json, confidences);
+    ProcessBasic(json, question, answers, confidences);
 }
 
 /**
@@ -57,23 +57,51 @@ vector<string> StripSnippets(ofxJSONElement &json) {
     return snippets;
 }
 
+int CountAnswerOccurrences(string source, string answer) {
+    string lower_source = ToLowerCase(source);
+    string lower_answer = ToLowerCase(answer);
+    vector<string> pieces = Split(lower_answer, ' ');
+    
+    int count = 0;
+    
+    for (string &piece : pieces) {
+        count += Count(lower_source, piece);
+    }
+    
+    return count;
+}
+
 /**
  * Increase confidence levels using the default search
  */
 void SearchBasic(SearchCred &cred, string question, vector<string> answers) {
+    cout << "Requesting basic search [ASYNC]" << endl;
+    
     ofLoadURLAsync(cred.GetUrl(question));
 }
 
 /**
  * Process the basic search JSON and update the confidence levels
  */
-void ProcessBasic(ofxJSONElement &json, vector<double> &confidences) {
+void ProcessBasic(ofxJSONElement &json, string question, vector<string> answers, vector<double> &confidences) {
     cout << "Processing basic search snippets:" << endl;
     
     vector<string> snippets = StripSnippets(json);
     
+    int max_count = 0;
+    
     for (string &snippet : snippets) {
         cout << snippet << endl;
+        
+        for (int i = 0; i < answers.size(); i++) {
+            int count = CountAnswerOccurrences(snippet, answers[i]);
+            confidences[i] += count;
+            max_count += count;
+        }
+    }
+    
+    for (int i = 0; i < confidences.size(); i++) {
+        confidences[i] /= max_count;
     }
 }
 

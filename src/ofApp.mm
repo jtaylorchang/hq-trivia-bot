@@ -52,7 +52,7 @@ const ofRectangle kAnswerBox((kWidth - kAnswerRectWidth) / 2,
 /* SETUP */
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
     ofRegisterURLNotification(this);
     
     SetupArguments();
@@ -354,7 +354,7 @@ void ofApp::urlResponse(ofHttpResponse &response) {
         cout << "Good async response" << endl;
         //cout << response.data << endl;
         
-        ReceiveResponse(response, confidences_);
+        ReceiveResponse(response, question_, answers_, confidences_);
     } else {
         cout << "Bad async response:" << endl;
         cout << response.status << " " << response.error << endl;

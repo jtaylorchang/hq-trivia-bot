@@ -112,9 +112,68 @@ string BreakIntoLines(string source, int line_width) {
 }
 
 /**
+ * Convert a string to lower case
+ */
+string ToLowerCase(string source) {
+    string lower_str = source;
+    std::transform(lower_str.begin(), lower_str.end(), lower_str.begin(), ::tolower);
+    return lower_str;
+}
+
+/**
  * Counts the number of occurrences of a char in a string
  */
 int Count(string source, char search_char) {
     std::size_t count = std::count(source.begin(), source.end(), search_char);
     return static_cast<int>(count);
+}
+
+/**
+ * Counts the number of occurrences of a string in a larger string
+ */
+int Count(string source, string search_str) {
+    if (source.empty() || search_str.empty()) {
+        // No count
+        return 0;
+    }
+    
+    if (search_str.size() == 1) {
+        // Use the char count function
+        return Count(source, search_str[0]);
+    }
+    
+    int count = 0;
+    int furthest_start = 0;
+    int last_possible_start = source.length() - search_str.length() + 1;
+    char starting_char = search_str[0];
+    
+    for (int i = 0; i < last_possible_start; i++) {
+        if (source[i] == starting_char) {
+            // Check for the rest of the substring
+            furthest_start = i;
+            
+            bool matches = true;
+            for (int search_index = 1; search_index < search_str.length(); search_index++) {
+                if (source[i + search_index] == starting_char && furthest_start == i) {
+                    // Next possible starting point to check
+                    furthest_start = i + search_index;
+                }
+                
+                if (source[i + search_index] != search_str[search_index]) {
+                    // Not a match
+                    i = furthest_start - 1;
+                    matches = false;
+                    break;
+                }
+            }
+            
+            if (matches) {
+                // Found a match
+                count++;
+                i += search_str.length();
+            }
+        }
+    }
+    
+    return count;
 }
