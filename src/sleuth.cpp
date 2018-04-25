@@ -31,6 +31,9 @@ void ReceiveResponse(ofHttpResponse &response, string question, vector<string> a
     cout << "Received response in Sleuth [ASYNC]" << endl;
     
     ofxJSONElement json = LoadSearchResults(response.data.getText());
+    
+    PrepareConfidences(confidences);
+    
     ProcessBasic(json, question, answers, confidences);
 }
 
@@ -40,6 +43,15 @@ void ReceiveResponse(ofHttpResponse &response, string question, vector<string> a
 ofxJSONElement LoadSearchResults(string content) {
     ofxJSONElement json (content);
     return json;
+}
+
+/**
+ * Prepare the confidence vector to accept answer counts
+ */
+void PrepareConfidences(vector<double> &confidences) {
+    for (int i = 0; i < confidences.size(); i++) {
+        confidences[i] = 0;
+    }
 }
 
 /**
@@ -58,14 +70,12 @@ vector<string> StripSnippets(ofxJSONElement &json) {
 }
 
 int CountAnswerOccurrences(string source, string answer) {
-    string lower_source = ToLowerCase(source);
-    string lower_answer = ToLowerCase(answer);
-    vector<string> pieces = Split(lower_answer, ' ');
+    vector<string> pieces = Split(answer, ' ');
     
     int count = 0;
     
     for (string &piece : pieces) {
-        count += Count(lower_source, piece);
+        count += Count(source, piece);
     }
     
     return count;
@@ -87,21 +97,40 @@ void ProcessBasic(ofxJSONElement &json, string question, vector<string> answers,
     cout << "Processing basic search snippets:" << endl;
     
     vector<string> snippets = StripSnippets(json);
+    vector<string> lower_answers = answers;
+    
+    for (int i = 0; i < lower_answers.size(); i++) {
+        lower_answers[i] = ToLowerCase(Trim(lower_answers[i]));
+    }
     
     int max_count = 0;
     
     for (string &snippet : snippets) {
+        cout << "Reading snippet:" << endl;
         cout << snippet << endl;
         
+        string lower_snippet = ToLowerCase(snippet);
+        
         for (int i = 0; i < answers.size(); i++) {
-            int count = CountAnswerOccurrences(snippet, answers[i]);
+            int count = CountAnswerOccurrences(lower_snippet, lower_answers[i]);
             confidences[i] += count;
-            max_count += count;
+            
+            if (confidences[i] > max_count) {
+                max_count = confidences[i];
+            }
+            
+            cout << "Found count [" << count << "] for answer " << (i + 1) << endl << endl;
         }
     }
     
-    for (int i = 0; i < confidences.size(); i++) {
-        confidences[i] /= max_count;
+    if (max_count > 0) {
+        for (int i = 0; i < confidences.size(); i++) {
+            confidences[i] /= max_count;
+            
+            if (confidences[i] > 1) {
+                confidences[i] = 1;
+            }
+        }
     }
 }
 

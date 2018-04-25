@@ -27,6 +27,7 @@ SearchCred &ChooseCredentials();
  * @param question the question that is being answered
  * @param answers the possible answers
  * @param confidences the confidence destination vector
+ * @param max_confidence the max confidence destination double
  */
 void ReceiveResponse(ofHttpResponse &response, string question, vector<string> answers, vector<double> &confidences);
 
@@ -38,6 +39,13 @@ void ReceiveResponse(ofHttpResponse &response, string question, vector<string> a
  * @return the JSON results
  */
 ofxJSONElement LoadSearchResults(string content);
+
+/**
+ * Prepare the confidence vector to accept answer counts
+ *
+ * @param confidences the reference to the confidence vector
+ */
+void PrepareConfidences(vector<double> &confidences);
 
 /**
  * Strip the snippets from the given JSON data

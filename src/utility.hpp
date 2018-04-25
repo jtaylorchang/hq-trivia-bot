@@ -23,6 +23,13 @@ using std::endl;
 
 const double kDoubleThreshold = 0.01;
 
+const vector<string> kUrlEncodeKeys = {
+    "\n", "%", "~", ".", "!", "*", "(", ")", "'", "\"", "&", "#", "?", " "
+};
+const vector<string> kUrlEncodeValues = {
+    " ", "%25", "%7E", "%2E", "%21", "%2A", "%28", "%29", "%27", "%22", "%26", "%23", "%3F", "%20"
+};
+
 /**
  * Set a key and value pair in a given map
  *
@@ -86,12 +93,28 @@ vector<string> Split(std::string input, char delimiter);
 string BreakIntoLines(string source, int line_width);
 
 /**
+ * Trim invalid starting and ending characters
+ *
+ * @param source the string to trim
+ * @return the trimmed string
+ */
+string Trim(string source);
+
+/**
  * Convert a string to lower case
  *
  * @param source the string to turn to lower case
  * @return the lower case version
  */
 string ToLowerCase(string source);
+
+/**
+ * URL Encodes a given string
+ *
+ * @param source the string to URL encode
+ * @return an encoded string
+ */
+string UrlEncode(string source);
 
 /**
  * Counts the number of occurrences of a char in a string

@@ -30,6 +30,10 @@ void SearchCred::GenerateBaseUrl() {
  * Get the url for the Google Custom Search for a given message using the predefined auth.
  */
 string SearchCred::GetUrl(string query) {
-    // May need to URL encode the query
-    return url_ + query;
+    string url = url_ + UrlEncode(query);
+    
+    cout << "Encoding URL:" << endl;
+    cout << url << endl;
+    
+    return url;
 }

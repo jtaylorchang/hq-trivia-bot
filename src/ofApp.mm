@@ -8,7 +8,7 @@ const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&user
 
 const int kMinArgCount = 3;
 const int kQuestionArgIndex = 0;
-const int kQuestionLineWidth = 18;
+const int kQuestionLineWidth = 16;
 
 const ofColor kWhiteColor(255, 255, 255);
 const ofColor kBgColor(71, 73, 160);
@@ -68,10 +68,10 @@ void ofApp::setup() {
  */
 void ofApp::ProcessArguments() {
     cout << "Processing commandline arguments" << endl;
-    question_ = args_[kQuestionArgIndex];
+    question_ = Trim(args_[kQuestionArgIndex]);
     
     for (int i = 0; i < kAnswerCount; i++) {
-        answers_[i] = args_[i + 1];
+        answers_[i] = Trim(args_[i + 1]);
     }
     
     using_socket_ = false;
@@ -160,9 +160,14 @@ void ofApp::update() {
     
     if (!found_answer_ && !answering_) {
         AnswerQuestion();
+    } else if (!found_answer_) {
+        CheckForAnswer();
     }
 }
 
+/**
+ * Update the web socket connection and check for new questions
+ */
 void ofApp::UpdateSocket() {
     bool connected = SocketHandler.connected;
     mitm_.SetConnected(connected);
@@ -174,6 +179,9 @@ void ofApp::UpdateSocket() {
             if (latest_message != mitm_.GetLatestMessage()) {
                 cout << "Received new message:" << endl;
                 cout << latest_message << endl;
+                
+                found_answer_ = false;
+                answering_ = false;
                 
                 mitm_.SetLatestMessage(latest_message);
                 mitm_.UpdateFromMessage(question_, answers_);
@@ -211,13 +219,27 @@ void ofApp::ResetConfidences() {
     cout << "Resetting confidence levels" << endl;
     
     for (int i = 0; i < kAnswerCount; i++) {
-        confidences_[i] = min_confidence_;
+        confidences_[i] = -1;
     }
     
-    max_confidence_ = 1.0;
+    max_confidence_ = -1;
 }
 
-/* UPDATE */
+/**
+ * Check for the answers to be updated
+ */
+void ofApp::CheckForAnswer() {
+    if (max_confidence_ < 0) {
+        for (double confidence : confidences_) {
+            if (confidence > max_confidence_ && confidence >= 0) {
+                max_confidence_ = confidence;
+                found_answer_ = true;
+            }
+        }
+    }
+}
+
+/* DRAW */
 
 //--------------------------------------------------------------
 void ofApp::draw(){
@@ -241,7 +263,7 @@ void ofApp::DrawQuestion() {
  * Modifies the color scheme for the following answer depending on confidence level
  */
 void ofApp::UpdateAnswerColors(double confidence) {
-    if (ApproxEquals(confidence, max_confidence_)) {
+    if (ApproxEquals(confidence, max_confidence_) && max_confidence_ >= 0) {
         current_shape_color_ = kCorrectColor;
         current_text_color_ = kWhiteColor;
     } else {
@@ -274,11 +296,14 @@ void ofApp::DrawAnswers() {
         UpdateAnswerColors(confidences_[i]);
         
         ofSetColor(current_shape_color_);
-        ofDrawRectRounded(kAnswerBox.getX(),
-                          kAnswerBox.getY() + y_offset,
-                          (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_confidence_)),
-                          kAnswerBox.getHeight(),
-                          kAnswerRectRounding);
+        
+        if (confidences_[i] >= 0) {
+            ofDrawRectRounded(kAnswerBox.getX(),
+                              kAnswerBox.getY() + y_offset,
+                              (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_confidence_)),
+                              kAnswerBox.getHeight(),
+                              kAnswerRectRounding);
+        }
         
         // Render the answer text
         ofSetColor(current_text_color_);

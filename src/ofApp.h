@@ -83,6 +83,9 @@ public:
     /* UPDATE */
     void update();
     
+    /**
+     * Update the web socket connection and check for new questions
+     */
     void UpdateSocket();
     
     /**
@@ -101,6 +104,11 @@ public:
      * Reset the confidence levels for the answers
      */
     void ResetConfidences();
+    
+    /**
+     * Check for the answers to be updated
+     */
+    void CheckForAnswer();
     
     /* DRAW */
     void draw();

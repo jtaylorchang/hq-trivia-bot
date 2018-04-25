@@ -111,6 +111,20 @@ string BreakIntoLines(string source, int line_width) {
     return broken_word;
 }
 
+/*
+ * Trim the spaces off of a given string
+ */
+string Trim(string source) {
+    string trimmed_str = source;
+    
+    // code derived from:
+    // http://www.martinbroadhurst.com/how-to-trim-a-stdstring.html
+    const string &kTrimValues = "\t\n\v\f\r ";
+    trimmed_str.erase(0, trimmed_str.find_first_not_of(kTrimValues));
+    trimmed_str.erase(trimmed_str.find_last_not_of(kTrimValues) + 1);
+    return trimmed_str;
+}
+
 /**
  * Convert a string to lower case
  */
@@ -118,6 +132,16 @@ string ToLowerCase(string source) {
     string lower_str = source;
     std::transform(lower_str.begin(), lower_str.end(), lower_str.begin(), ::tolower);
     return lower_str;
+}
+
+string UrlEncode(string source) {
+    string encoded_str = Trim(source);
+    
+    for (int i = 0; i < kUrlEncodeKeys.size(); i++) {
+        encoded_str = Replace(encoded_str, kUrlEncodeKeys[i], kUrlEncodeValues[i]);
+    }
+    
+    return encoded_str;
 }
 
 /**
@@ -161,7 +185,9 @@ int Count(string source, string search_str) {
                 
                 if (source[i + search_index] != search_str[search_index]) {
                     // Not a match
-                    i = furthest_start - 1;
+                    if (furthest_start > i) {
+                        i = furthest_start - 1;
+                    }
                     matches = false;
                     break;
                 }
