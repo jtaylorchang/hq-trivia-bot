@@ -15,7 +15,7 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Generate a weighting for each answer
 - [x] Try to distribute searches over multiple API's
 - [x] Improve rendering of results as GUI
-- [x] Accept data over commandline arguments
+- [x] Accept data over commandline arguments (makes testing easier)
 - [x] Create shell script to run command line questions
 - [x] Create shell auto test scripts to run question answer scenarios
 
