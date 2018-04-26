@@ -1,0 +1,36 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd ".."
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    question="When was the Lewis and Clark Expedition?"
+    answer1="1797 - 1799"
+    answer2="1804 - 1806"
+    answer3="1818 - 1820"
+
+    echo "Enter the question:"
+    echo "$question"
+    
+    echo ""
+    echo "Enter the first answer:"
+    echo "$answer1"
+
+    echo ""
+    echo "Enter the second answer:"
+    echo "$answer2"
+
+    echo ""
+    echo "Enter the third answer:"
+    echo "$answer3"
+
+    ./Holmes "$question" "$answer1" "$answer2" "$answer3"
+}
+
+switchdir
+run

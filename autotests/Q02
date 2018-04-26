@@ -1,0 +1,36 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd ".."
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    question="What high school TV show did Mario Lopez and Tiffani Amber Thiessen star in?"
+    answer1="90210"
+    answer2="Saved by the Bell"
+    answer3="Sweet Valley High"
+
+    echo "Enter the question:"
+    echo "$question"
+    
+    echo ""
+    echo "Enter the first answer:"
+    echo "$answer1"
+
+    echo ""
+    echo "Enter the second answer:"
+    echo "$answer2"
+
+    echo ""
+    echo "Enter the third answer:"
+    echo "$answer3"
+
+    ./Holmes "$question" "$answer1" "$answer2" "$answer3"
+}
+
+switchdir
+run

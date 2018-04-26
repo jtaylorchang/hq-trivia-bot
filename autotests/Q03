@@ -1,0 +1,36 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd ".."
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    question="What female poet was a civil rights activist who worked with Martin Luther King and Malcolm X?"
+    answer1="Agatha Christie"
+    answer2="Maya Angelou"
+    answer3="Alice Munro"
+
+    echo "Enter the question:"
+    echo "$question"
+    
+    echo ""
+    echo "Enter the first answer:"
+    echo "$answer1"
+
+    echo ""
+    echo "Enter the second answer:"
+    echo "$answer2"
+
+    echo ""
+    echo "Enter the third answer:"
+    echo "$answer3"
+
+    ./Holmes "$question" "$answer1" "$answer2" "$answer3"
+}
+
+switchdir
+run

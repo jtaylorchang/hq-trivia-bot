@@ -1,0 +1,36 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd ".."
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    question="Which US city saw a 47 degree F drop in temperature in 15 minutes?"
+    answer1="Minneapolis Minnesota"
+    answer2="Barrow Alaska"
+    answer3="Rapid City South Dakota"
+
+    echo "Enter the question:"
+    echo "$question"
+    
+    echo ""
+    echo "Enter the first answer:"
+    echo "$answer1"
+
+    echo ""
+    echo "Enter the second answer:"
+    echo "$answer2"
+
+    echo ""
+    echo "Enter the third answer:"
+    echo "$answer3"
+
+    ./Holmes "$question" "$answer1" "$answer2" "$answer3"
+}
+
+switchdir
+run
