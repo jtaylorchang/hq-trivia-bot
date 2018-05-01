@@ -269,7 +269,7 @@ void ofApp::ResetConfidences() {
     }
     
     max_confidence_ = -1;
-    min_confidence_ = -1;
+    min_confidence_ = 1;
 }
 
 /**
@@ -289,8 +289,22 @@ void ofApp::CheckForAnswer() {
             }
         }
         
-        if (found_answer_ && is_test_) {
-            AdvanceTesting();
+        if (found_answer_) {
+            for (int i = 0; i < kAnswerCount; i++) {
+                if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
+                    chosen_answer_ = answers_[i];
+                } else if (ApproxEquals(confidences_[i], min_confidence_) && should_negate_) {
+                    chosen_answer_ = answers_[i];
+                }
+                
+                cout << "Confidence #" << (i + 1) << ": " << confidences_[i] << endl;
+            }
+            
+            cout << "Chose the answer: " << chosen_answer_;
+            
+            if (is_test_) {
+                AdvanceTesting();
+            }
         }
     }
 }
@@ -300,19 +314,10 @@ void ofApp::CheckForAnswer() {
  */
 void ofApp::AdvanceTesting() {
     // Choose the correct answer
-    string chosen_answer = "";
-    for (int i = 0; i < kAnswerCount; i++) {
-        if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
-            chosen_answer = answers_[i];
-        } else if (ApproxEquals(confidences_[i], min_confidence_) && should_negate_) {
-            chosen_answer = answers_[i];
-        }
-    }
-    
-    cout << "Chosen correct answer to be: " << chosen_answer << endl;
+    cout << "Chosen correct answer to be: " << chosen_answer_ << endl;
     cout << "Actual correct answer is   : " << test_answers_[current_test_question_][kAnswerCount] << endl;
     
-    if (chosen_answer == test_answers_[current_test_question_][kAnswerCount]) {
+    if (chosen_answer_ == test_answers_[current_test_question_][kAnswerCount]) {
         // Got the answer correct
         correct_test_count_++;
     }

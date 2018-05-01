@@ -21,6 +21,7 @@ private:
     vector<vector<string>> test_answers_;
     string correct_test_answer_ = "";
     int correct_test_count_ = 0;
+    string chosen_answer_ = "";
     
     ofImage iphone_x_;
     ofImage iphone_x_connected_;
