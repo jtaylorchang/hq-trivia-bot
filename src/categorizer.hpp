@@ -19,10 +19,10 @@ using std::string;
  */
 
 enum Category {
-    SimpleFact,                 // Simple facts use a naive google search
-    ChronologicalFirst,         // Search the year for each and choose the earliest result
-    ChronologicalLast,          // Search the year for each and choose the latest result
-    UnknownWhich                // Looks for occurrences of the question in the answer results
+    SIMPLEFACT,                 // Simple facts use a naive google search
+    CHRONOLOGICALFIRST,         // Search the year for each and choose the earliest result
+    CHRONOLOGICALLAST,          // Search the year for each and choose the latest result
+    UNKNOWNWHICH                // Looks for occurrences of the question in the answer results
 };
 
 const vector<string> negations_ = {

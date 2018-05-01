@@ -32,6 +32,19 @@ const vector<string> kUrlEncodeValues = {
 
 const int kMaxConvertableNumeral = 10;
 
+const vector<string> kSimpleWords = {
+    "a", "i", "to", "is", "not", "the", "can", "and"
+};
+
+enum ConsoleColor {
+    WHITE,
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    MAGENTA
+};
+
 /**
  * Set a key and value pair in a given map
  *
@@ -169,5 +182,11 @@ bool IsConvertableNumber(string source);
  * @return the english representation
  */
 string NumeralToEnglish(int num);
+
+bool IsComplex(string word);
+
+void SetConsoleColor(ConsoleColor color);
+
+void PrintColorful(string message, ConsoleColor color);
 
 #endif /* utility_hpp */

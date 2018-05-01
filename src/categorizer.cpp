@@ -19,5 +19,5 @@ bool GetNegation(string question) {
  * Get the category of the given question
  */
 Category GetCategory(string question) {
-    return SimpleFact;
+    return SIMPLEFACT;
 }

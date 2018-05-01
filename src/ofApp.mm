@@ -78,6 +78,8 @@ void ofApp::ProcessArguments() {
         for (int i = 0; i < kAnswerCount; i++) {
             answers_[i] = Trim(args_[i + 1]);
         }
+        
+        is_manual_ = true;
     } else {
         string source = args_[kTestFileArgIndex];
         ProcessTestFile(source);
@@ -103,7 +105,7 @@ void ofApp::ProcessTestFile(string source) {
     json.open(source);
     
     cout << "Parsed test JSON:" << endl;
-    cout << json.getRawString(true) << endl;
+    //cout << json.getRawString(true) << endl;
     
     std::size_t size = json["questions"].size();
     for (Json::ArrayIndex i = 0; i < size; i++) {
@@ -205,7 +207,7 @@ void ofApp::update() {
     
     if (!found_answer_ && !answering_) {
         AnswerQuestion();
-    } else if (!found_answer_) {
+    } else {
         CheckForAnswer();
     }
 }
@@ -222,8 +224,7 @@ void ofApp::UpdateSocket() {
         
         if (!latest_message.empty()) {
             if (latest_message != mitm_.GetLatestMessage()) {
-                cout << "Received new message:" << endl;
-                cout << latest_message << endl;
+                PrintColorful("Received new message: " + latest_message, YELLOW);
                 
                 found_answer_ = false;
                 answering_ = false;
@@ -253,9 +254,7 @@ void ofApp::AnswerQuestion() {
     answering_ = true;
     should_negate_ = GetNegation(question_);
     
-    Investigate(question_, answers_);
-    
-    // TODO: accept next question
+    sleuth_.Investigate(question_, answers_);
 }
 
 /**
@@ -276,20 +275,22 @@ void ofApp::ResetConfidences() {
  * Check for the answers to be updated
  */
 void ofApp::CheckForAnswer() {
-    if (max_confidence_ < 0) {
-        for (double confidence : confidences_) {
-            if (confidence > max_confidence_ && confidence >= 0) {
-                max_confidence_ = confidence;
-                found_answer_ = true;
-            }
-            
-            if (confidence < min_confidence_ && confidence >= 0) {
-                min_confidence_ = confidence;
-                found_answer_ = true;
+    if(!found_answer_) {
+        if (max_confidence_ < 0 && sleuth_.finished_basic_ && sleuth_.finished_wikipedia_basic_) {
+            for (double confidence : confidences_) {
+                if (confidence > max_confidence_ && confidence >= 0) {
+                    max_confidence_ = confidence;
+                    found_answer_ = true;
+                }
+                
+                if (confidence < min_confidence_ && confidence >= 0) {
+                    min_confidence_ = confidence;
+                    found_answer_ = true;
+                }
             }
         }
-        
-        if (found_answer_) {
+    } else {
+        if (!done_testing_ && !is_manual_) {
             for (int i = 0; i < kAnswerCount; i++) {
                 if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
                     chosen_answer_ = answers_[i];
@@ -299,8 +300,6 @@ void ofApp::CheckForAnswer() {
                 
                 cout << "Confidence #" << (i + 1) << ": " << confidences_[i] << endl;
             }
-            
-            cout << "Chose the answer: " << chosen_answer_;
             
             if (is_test_) {
                 AdvanceTesting();
@@ -314,20 +313,19 @@ void ofApp::CheckForAnswer() {
  */
 void ofApp::AdvanceTesting() {
     // Choose the correct answer
-    cout << "Chosen correct answer to be: " << chosen_answer_ << endl;
-    cout << "Actual correct answer is   : " << test_answers_[current_test_question_][kAnswerCount] << endl;
+    PrintColorful("Chosen correct answer to be: " + chosen_answer_, YELLOW);
+    PrintColorful("Actual correct answer is   : " + test_answers_[current_test_index_][kAnswerCount], YELLOW);
     
-    if (chosen_answer_ == test_answers_[current_test_question_][kAnswerCount]) {
-        // Got the answer correct
-        correct_test_count_++;
-    }
+    correct_answers_.push_back(chosen_answer_ == test_answers_[current_test_index_][kAnswerCount]);
+    chosen_answers_.push_back(chosen_answer_);
+    test_confidences_.push_back(confidences_);
     
-    current_test_question_++;
-    if (current_test_question_ < test_questions_.size()) {
+    current_test_index_++;
+    if (current_test_index_ < test_questions_.size()) {
         // Load the next test question and answers
-        question_ = BreakIntoLines(test_questions_[current_test_question_], kQuestionLineWidth);
+        question_ = BreakIntoLines(test_questions_[current_test_index_], kQuestionLineWidth);
         for (int i = 0; i < kAnswerCount; i++) {
-            answers_[i] = test_answers_[current_test_question_][i];
+            answers_[i] = test_answers_[current_test_index_][i];
         }
         
         found_answer_ = false;
@@ -335,9 +333,38 @@ void ofApp::AdvanceTesting() {
         ResetConfidences();
     } else {
         // Print the final results
-        cout << "Test has concluded" << endl;
-        cout << "Correct: " << correct_test_count_ << " / " << test_questions_.size() << endl;
+        done_testing_ = true;
+        PrintTestResults();
     }
+}
+
+/**
+ * Print out the test results for the full question bank
+ */
+void ofApp::PrintTestResults() {
+    cout << "Test has concluded" << endl;
+    
+    int correct_count = 0;
+    
+    for (int i = 0; i < correct_answers_.size(); i++) {
+        if (!correct_answers_[i]) {
+            cout << "Got question incorrect: " << endl;
+            PrintColorful("Question: " + test_questions_[i], YELLOW);
+            PrintColorful("Should have chosen: " + test_answers_[i][kAnswerCount], GREEN);
+            PrintColorful("Instead it chose  : " + chosen_answers_[i], RED);
+            
+            cout << "Choices: " << endl;
+            for (int answer_index = 0; answer_index < kAnswerCount; answer_index++) {
+                cout << " :" << test_answers_[i][answer_index] << endl;
+                cout << " : confidence :" << test_confidences_[i][answer_index] << endl;
+            }
+        } else {
+            correct_count++;
+        }
+    }
+    
+    string accuracy = std::to_string(correct_count) + " / " + std::to_string(correct_answers_.size());
+    PrintColorful("Accuracy: " + accuracy, YELLOW);
 }
 
 /* DRAW */
@@ -404,7 +431,7 @@ void ofApp::DrawAnswers() {
         if (confidences_[i] >= 0) {
             ofDrawRectRounded(kAnswerBox.getX(),
                               kAnswerBox.getY() + y_offset,
-                              (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_render_confidence_)),
+                              (int) (kAnswerBox.getWidth() * std::min(std::max(confidences_[i], min_render_confidence_), 1.0)),
                               kAnswerBox.getHeight(),
                               kAnswerRectRounding);
         }
@@ -483,7 +510,7 @@ void ofApp::urlResponse(ofHttpResponse &response) {
         cout << "Good async response" << endl;
         //cout << response.data << endl;
         
-        ReceiveResponse(response, question_, answers_, confidences_);
+        sleuth_.ReceiveResponse(response, question_, answers_, confidences_);
     } else {
         cout << "Bad async response:" << endl;
         cout << response.status << " " << response.error << endl;

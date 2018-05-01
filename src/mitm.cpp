@@ -8,7 +8,7 @@ const int kAnswerCount = 3;
  * Initializes the headers that apply to both the broadcast and the socket
  */
 void Mitm::SetupConstantHeaders() {
-    cout << "Setting cross headers" << endl;
+    PrintColorful("Setting cross headers", MAGENTA);
     
     SetConstantHeader("x-hq-client", "iOS/1.3.2 b84");
     SetConstantHeader("Authorization", "Bearer " + kBearerToken);
@@ -20,11 +20,11 @@ void Mitm::SetupConstantHeaders() {
  * Initializes the headers and sets the given url for the Broadcast connection
  */
 void Mitm::SetupBroadcast(string url) {
-    cout << "Preparing connection to: " << url << endl;
+    PrintColorful("Preparing connection to: " + url, MAGENTA);
     
     url_ = Replace(url, "USER_ID", kUserId);
     cout << "Updated url with user ID: " << url_ << endl;
-    cout << "Setting broadcast headers, user ID, bearer token" << endl;
+    PrintColorful("Setting broadcast headers, user ID, bearer token", MAGENTA);
     
     SetMapValue(broadcast_headers_, "Accept", "*/*");
     SetMapValue(broadcast_headers_, "User-Agent", "HQ/84 CFNetwork/897.15 Darwin/17.5.0");
@@ -35,7 +35,7 @@ void Mitm::SetupBroadcast(string url) {
  * Initializes the headers for the socket connection (handled in Swift)
  */
 void Mitm::SetupSocket() {
-    cout << "Preparing socket headers" << endl;
+    PrintColorful("Preparing socket headers", MAGENTA);
     
     SetMapValue(socket_headers_, "Connection", "Keep-Alive");
     SetMapValue(socket_headers_, "Accept-Encoding", "gzip");
@@ -46,7 +46,7 @@ void Mitm::SetupSocket() {
  * Connects to the HQ server, establishes a connection and returns the JSON result
  */
 void Mitm::EmulatePhoneConnection() {
-    cout << "Emulating HQ client connection" << endl;
+    PrintColorful("Emulating HQ client connection", MAGENTA);
     
     DefaultClient client;
     Context context;
@@ -63,7 +63,7 @@ void Mitm::EmulatePhoneConnection() {
         std::istream &response_stream = client.execute(request, response, context);
         Poco::StreamCopier::copyToString(response_stream, json_content);
         
-        cout << "Received JSON content:" << endl;
+        PrintColorful("Received JSON content:", MAGENTA);
         cout << json_content << endl;
         
         ofxJSONElement json(json_content);
@@ -89,7 +89,7 @@ bool Mitm::GameIsActive() {
  */
 void Mitm::ExtractSocketUrl() {
     socket_url_ = broadcast_json_["broadcast"]["socketUrl"].asString();
-    cout << "Extracted unfiltered socket: " << socket_url_ << endl;
+    PrintColorful("Extracted unfiltered socket: " + socket_url_, MAGENTA);
     
     socket_url_ = Replace(socket_url_, "https://", "wss://");
     cout << "Filtered socket: " << socket_url_ << endl;

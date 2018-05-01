@@ -16,20 +16,33 @@ class ofApp : public ofBaseApp {
 private:
     vector<string> args_;
     
-    int current_test_question_ = 0;
-    vector<string> test_questions_;
-    vector<vector<string>> test_answers_;
-    string correct_test_answer_ = "";
-    int correct_test_count_ = 0;
-    string chosen_answer_ = "";
+    /* TEST VARIABLES */
+    
+    int current_test_index_ = 0;             // The current index in automated tests
+    vector<string> test_questions_;             // The questions for the automated tests
+    vector<vector<string>> test_answers_;       // The answers for the automated tests
+    vector<bool> correct_answers_;              // If it was correct for each test
+    vector<string> chosen_answers_;             // Answer chosen for each automated test
+    vector<vector<double>> test_confidences_;   // Confidences for each automated test
+    string chosen_answer_ = "";                 // Answer chosen during testing
+    bool done_testing_ = false;                 // Automated testing is complete
+    bool is_manual_ = false;                    // Run from commandline, single Q
+    
+    /* LOGIC INSTANCE VARIABLES */
+    
+    Sleuth sleuth_;
+    Mitm mitm_;
+    
+    /* GRAPHICS VARIABLES */
     
     ofImage iphone_x_;
     ofImage iphone_x_connected_;
     ofTrueTypeFont cabin_;
     ofTrueTypeFont cabin_bold_;
-    Mitm mitm_;
     ofColor current_shape_color_;
     ofColor current_text_color_;
+    
+    /* DEFAULT VALUES BEFORE GAME STARTS */
     
     string question_ = "How long does the average game of HQ Trivia take to start?";
     vector<string> answers_ = {
@@ -37,8 +50,6 @@ private:
         "Ten years",
         "An eternity"
     };
-    
-    /* DEFAULT VALUES BEFORE GAME STARTS */
     
     // Arbitrarily chosen confidence levels just to show default working
     vector<double> confidences_ = {
@@ -65,6 +76,7 @@ private:
     // Using a socket connection vs command line
     bool using_socket_ = true;
     
+    // Using automated test data
     bool is_test_ = false;
 
 public:
@@ -137,6 +149,11 @@ public:
      * Continue testing if applicable, accepting next question
      */
     void AdvanceTesting();
+    
+    /**
+     * Print out the test results for the full question bank
+     */
+    void PrintTestResults();
     
     /* DRAW */
     void draw();

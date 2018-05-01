@@ -14,7 +14,7 @@ private:
     string api_key_;
     string cx_code_;
     string url_ = "https://www.googleapis.com/customsearch/v1?prettyPrint=false&fields=items(title,snippet)&key=API_KEY&cx=CX_CODE&q=";
-    string wikipedia_url_ = "https://en.wikipedia.org/w/api.php?action=query&list=search&&srprop=snippet&srinfo=&format=json&srsearch=";
+    string wikipedia_url_ = "https://en.wikipedia.org/w/api.php?action=query&list=search&&srprop=snippet&srinfo=&format=json&srlimit=100&srsearch=";
     
 public:
     /**

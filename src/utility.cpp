@@ -270,3 +270,47 @@ string NumeralToEnglish(int num) {
     
     return "";
 }
+
+bool IsComplex(string word) {
+    string lower_word = ToLowerCase(word);
+    
+    for (string simple_word : kSimpleWords) {
+        if (lower_word == simple_word) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+void SetConsoleColor(ConsoleColor color) {
+    switch (color) {
+        case WHITE:
+            cout << "\033[0m";
+            break;
+        case RED:
+            cout << "\033[31m";
+            break;
+        case GREEN:
+            cout << "\033[32m";
+            break;
+        case BLUE:
+            cout << "\033[34m";
+            break;
+        case YELLOW:
+            cout << "\033[33m";
+            break;
+        case MAGENTA:
+            cout << "\033[35m";
+            break;
+        default:
+            cout << "\033[0m";
+            break;
+    }
+}
+
+void PrintColorful(string message, ConsoleColor color) {
+    SetConsoleColor(color);
+    cout << message << endl;
+    SetConsoleColor(WHITE);
+}
