@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include "search_cred.hpp"
+#include "categorizer.hpp"
 #include "ofxJSON.h"
 
 using std::string;

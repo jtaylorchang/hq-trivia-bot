@@ -37,3 +37,15 @@ string SearchCred::GetUrl(string query) {
     
     return url;
 }
+
+/**
+ * Get the url for the Wikimedia API search for a given question
+ */
+string SearchCred::GetWikipediaUrl(string query) {
+    string url = wikipedia_url_ + UrlEncode(query);
+    
+    cout << "Encoding URL:" << endl;
+    cout << url << endl;
+    
+    return url;
+}

@@ -30,6 +30,8 @@ const vector<string> kUrlEncodeValues = {
     " ", "%25", "%7E", "%2E", "%21", "%2A", "%28", "%29", "%27", "%22", "%26", "%23", "%3F", "%20"
 };
 
+const int kMaxConvertableNumeral = 10;
+
 /**
  * Set a key and value pair in a given map
  *
@@ -133,5 +135,39 @@ int Count(string source, char search_char);
  * @return an integer count number
  */
 int Count(string source, string search_str);
+
+/**
+ * Check if a string contains a substring
+ *
+ * @param source the string to check in
+ * @param search_str the string to search for
+ * @return if the source string contains the search string
+ */
+bool Contains(string source, string search_str);
+
+/**
+ * Check if a string contains at least one string from a vector
+ *
+ * @param source the string to check in
+ * @param search_strs the vector of strings to search for
+ * @return if the source string contains one of the search strings
+ */
+bool ContainsOneOf(string source, vector<string> search_strs);
+
+/**
+ * Check if a string can be converted to a number that can be converted to English
+ *
+ * @param source the string to check
+ * @return if the string is convertable
+ */
+bool IsConvertableNumber(string source);
+
+/**
+ * Convert an arabic numeral to an english word
+ *
+ * @param num the number to convert
+ * @return the english representation
+ */
+string NumeralToEnglish(int num);
 
 #endif /* utility_hpp */

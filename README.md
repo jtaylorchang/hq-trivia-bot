@@ -9,7 +9,7 @@ Holmes is a bot that solves trivia questions. It can act as a standalone system 
 3. Open the project by double clicking the Holmes.xcodeproj file on a Mac
 4. Select the build target to be Holmes-Release
 5. Build either by using the dropdown menu Product -> Build, or by hitting ⌘+B (CMD+B)
-6. The built HolmesDebug.app file is in the bin folder in the root of the project
+6. The built Holmes.app file is in the bin folder in the root of the project
 
 ## Running
 The application can be run in three modes:

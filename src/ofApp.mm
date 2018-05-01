@@ -6,6 +6,9 @@ const string kBroadcastUrl = "https://api-quiz.hype.space/shows/now?type=hq&user
 
 /* GRAPHICS CONSTANTS AND MAGIC NUMBERS */
 
+const int kTestArgCount = 2;
+const int kTestArgIndex = 0;
+const int kTestFileArgIndex = 1;
 const int kMinArgCount = 3;
 const int kQuestionArgIndex = 0;
 const int kQuestionLineWidth = 16;
@@ -68,10 +71,21 @@ void ofApp::setup() {
  */
 void ofApp::ProcessArguments() {
     cout << "Processing commandline arguments" << endl;
-    question_ = Trim(args_[kQuestionArgIndex]);
     
-    for (int i = 0; i < kAnswerCount; i++) {
-        answers_[i] = Trim(args_[i + 1]);
+    if (!is_test_) {
+        question_ = Trim(args_[kQuestionArgIndex]);
+        
+        for (int i = 0; i < kAnswerCount; i++) {
+            answers_[i] = Trim(args_[i + 1]);
+        }
+    } else {
+        string source = args_[kTestFileArgIndex];
+        ProcessTestFile(source);
+        
+        question_ = test_questions_[0];
+        for (int i = 0; i < kAnswerCount; i++) {
+            answers_[i] = test_answers_[0][i];
+        }
     }
     
     using_socket_ = false;
@@ -82,21 +96,52 @@ void ofApp::ProcessArguments() {
 }
 
 /**
+ * Process the questions and answers from the given file
+ */
+void ofApp::ProcessTestFile(string source) {
+    ofxJSONElement json;
+    json.open(source);
+    
+    cout << "Parsed test JSON:" << endl;
+    cout << json.getRawString(true) << endl;
+    
+    std::size_t size = json["questions"].size();
+    for (Json::ArrayIndex i = 0; i < size; i++) {
+        string question = json["questions"][i]["question"].asString();
+        cout << "Adding question for testing: " << question << endl;
+        
+        vector<string> answers;
+        answers.push_back(json["questions"][i]["answer1"].asString());
+        answers.push_back(json["questions"][i]["answer2"].asString());
+        answers.push_back(json["questions"][i]["answer3"].asString());
+        answers.push_back(json["questions"][i]["answerc"].asString());
+        
+        test_questions_.push_back(question);
+        test_answers_.push_back(answers);
+    }
+}
+
+/**
  * Setup and process the command line arguments if there are any
  */
 void ofApp::SetupArguments() {
     cout << "Apply command line arguments [" << args_.size() << "]" << endl;
+    // Print out the arguments
+    for (string arg : args_) {
+        cout << " :" << arg << endl;
+    }
     
     if (args_.size() >= kMinArgCount) {
-        // Print out the arguments
-        for (string arg : args_) {
-            cout << " :" << arg << endl;
-        }
-        
-        // Process the arguments
+        cout << "Applying arguments for running" << endl;
         ProcessArguments();
-    } else if (args_.size() > 0) {
-        cout << "Wrong number of arguments" << endl;
+    } else if (args_.size() == kTestArgCount) {
+        if (args_[kTestArgIndex] == "test") {
+            cout << "Applying arguments for testing" << endl;
+            is_test_ = true;
+            ProcessArguments();
+        } else {
+            cout << "Wrong number of arguments" << endl;
+        }
     }
     
     question_ = BreakIntoLines(question_, kQuestionLineWidth);
@@ -206,6 +251,7 @@ string ofApp::GetLatestMessage() {
 void ofApp::AnswerQuestion() {
     cout << "Answering current question" << endl;
     answering_ = true;
+    should_negate_ = GetNegation(question_);
     
     Investigate(question_, answers_);
     
@@ -223,6 +269,7 @@ void ofApp::ResetConfidences() {
     }
     
     max_confidence_ = -1;
+    min_confidence_ = -1;
 }
 
 /**
@@ -235,7 +282,56 @@ void ofApp::CheckForAnswer() {
                 max_confidence_ = confidence;
                 found_answer_ = true;
             }
+            
+            if (confidence < min_confidence_ && confidence >= 0) {
+                min_confidence_ = confidence;
+                found_answer_ = true;
+            }
         }
+        
+        if (found_answer_ && is_test_) {
+            AdvanceTesting();
+        }
+    }
+}
+
+/**
+ * Continue testing if applicable, accepting next question
+ */
+void ofApp::AdvanceTesting() {
+    // Choose the correct answer
+    string chosen_answer = "";
+    for (int i = 0; i < kAnswerCount; i++) {
+        if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
+            chosen_answer = answers_[i];
+        } else if (ApproxEquals(confidences_[i], min_confidence_) && should_negate_) {
+            chosen_answer = answers_[i];
+        }
+    }
+    
+    cout << "Chosen correct answer to be: " << chosen_answer << endl;
+    cout << "Actual correct answer is   : " << test_answers_[current_test_question_][kAnswerCount] << endl;
+    
+    if (chosen_answer == test_answers_[current_test_question_][kAnswerCount]) {
+        // Got the answer correct
+        correct_test_count_++;
+    }
+    
+    current_test_question_++;
+    if (current_test_question_ < test_questions_.size()) {
+        // Load the next test question and answers
+        question_ = BreakIntoLines(test_questions_[current_test_question_], kQuestionLineWidth);
+        for (int i = 0; i < kAnswerCount; i++) {
+            answers_[i] = test_answers_[current_test_question_][i];
+        }
+        
+        found_answer_ = false;
+        answering_ = false;
+        ResetConfidences();
+    } else {
+        // Print the final results
+        cout << "Test has concluded" << endl;
+        cout << "Correct: " << correct_test_count_ << " / " << test_questions_.size() << endl;
     }
 }
 
@@ -263,7 +359,10 @@ void ofApp::DrawQuestion() {
  * Modifies the color scheme for the following answer depending on confidence level
  */
 void ofApp::UpdateAnswerColors(double confidence) {
-    if (ApproxEquals(confidence, max_confidence_) && max_confidence_ >= 0) {
+    if (ApproxEquals(confidence, max_confidence_) && max_confidence_ >= 0 && !should_negate_) {
+        current_shape_color_ = kCorrectColor;
+        current_text_color_ = kWhiteColor;
+    } else if (ApproxEquals(confidence, min_confidence_) && min_confidence_ >= 0 && should_negate_) {
         current_shape_color_ = kCorrectColor;
         current_text_color_ = kWhiteColor;
     } else {
@@ -300,7 +399,7 @@ void ofApp::DrawAnswers() {
         if (confidences_[i] >= 0) {
             ofDrawRectRounded(kAnswerBox.getX(),
                               kAnswerBox.getY() + y_offset,
-                              (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_confidence_)),
+                              (int) (kAnswerBox.getWidth() * std::max(confidences_[i], min_render_confidence_)),
                               kAnswerBox.getHeight(),
                               kAnswerRectRounding);
         }

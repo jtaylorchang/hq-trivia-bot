@@ -1,0 +1,20 @@
+#!/bin/bash
+switchdir() {
+    cd "$(dirname "$0")"
+    cd ".."
+    cd "bin"
+    cd "Holmes.app"
+    cd "Contents"
+    cd "MacOS"
+}
+
+run() {
+    flag="test"
+    dir="$(dirname "$0")"
+    path="https://jefftc.com/Holmes/questions.json"
+
+    ./Holmes "$flag" "$path"
+}
+
+switchdir
+run

@@ -45,6 +45,7 @@
 		6B574EBF207F86A500CD4DA4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBB207F86A500CD4DA4 /* WebSocket.swift */; };
 		6B574EC1207F86A500CD4DA4 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBD207F86A500CD4DA4 /* main.mm */; };
 		6B574EC2207F86A500CD4DA4 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBE207F86A500CD4DA4 /* ofApp.mm */; };
+		6BA4F5192097F19500842491 /* categorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BA4F5172097F19500842491 /* categorizer.cpp */; };
 		6BF68BA5207FB15600DB541E /* SocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BA4207FB15600DB541E /* SocketHandler.swift */; };
 		6BF68BAB207FB39400DB541E /* search_cred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BA9207FB39400DB541E /* search_cred.cpp */; };
 		6BF68BAE207FB55F00DB541E /* sleuth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF68BAC207FB55F00DB541E /* sleuth.cpp */; };
@@ -239,6 +240,8 @@
 		6B574EBB207F86A500CD4DA4 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		6B574EBD207F86A500CD4DA4 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		6B574EBE207F86A500CD4DA4 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
+		6BA4F5172097F19500842491 /* categorizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = categorizer.cpp; sourceTree = "<group>"; };
+		6BA4F5182097F19500842491 /* categorizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = categorizer.hpp; sourceTree = "<group>"; };
 		6BD291FB03292C6D352C26FE /* FileExtensionFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = FileExtensionFilter.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/FileExtensionFilter.cpp; sourceTree = SOURCE_ROOT; };
 		6BF68BA4207FB15600DB541E /* SocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketHandler.swift; sourceTree = "<group>"; };
 		6BF68BA9207FB39400DB541E /* search_cred.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = search_cred.cpp; sourceTree = "<group>"; };
@@ -1072,12 +1075,14 @@
 				6BF68BB6207FC26B00DB541E /* mitm.cpp */,
 				6BF68BAC207FB55F00DB541E /* sleuth.cpp */,
 				6BF68BA9207FB39400DB541E /* search_cred.cpp */,
+				6BA4F5172097F19500842491 /* categorizer.cpp */,
 				6BFFB8722084137B00C17204 /* utility.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				6BF68BB7207FC26B00DB541E /* mitm.hpp */,
 				6BF68BAD207FB55F00DB541E /* sleuth.hpp */,
 				6BF68BAA207FB39400DB541E /* search_cred.hpp */,
 				6BFFB8732084137B00C17204 /* utility.hpp */,
+				6BA4F5182097F19500842491 /* categorizer.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1228,6 +1233,7 @@
 				F285EB3169F1566CA3D93C20 /* ofxPanel.cpp in Sources */,
 				837220E80EB56CD44AD27F2A /* ofxSlider.cpp in Sources */,
 				94481A0386DADFE60F3A4F48 /* OAuth10Credentials.cpp in Sources */,
+				6BA4F5192097F19500842491 /* categorizer.cpp in Sources */,
 				C79610B64C1FFA8A9309BA05 /* RequestHandlerAdapter.cpp in Sources */,
 				1C499EA2AD1749FB7569E701 /* BaseServer.cpp in Sources */,
 				6BF68BAE207FB55F00DB541E /* sleuth.cpp in Sources */,

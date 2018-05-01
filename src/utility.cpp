@@ -203,3 +203,70 @@ int Count(string source, string search_str) {
     
     return count;
 }
+
+/**
+ * Check if a string contains a substring
+ */
+bool Contains(string source, string search_str) {
+    return (source.find(search_str) != string::npos);
+}
+
+/**
+ * Check if a string contains at least one string from a vector
+ */
+bool ContainsOneOf(string source, vector<string> search_strs) {
+    for (string &search_str : search_strs) {
+        if (Contains(source, search_str)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Check if a string can be converted to a number that can be converted to English
+ */
+bool IsConvertableNumber(string source) {
+    string filtered_source = Replace(source, "-", "");
+    
+    // derived from:
+    // http://www.cplusplus.com/forum/beginner/48769/
+    if (filtered_source.find_first_not_of("0123456789") != string::npos) {
+        return false;
+    }
+    
+    return (stoi(filtered_source) <= kMaxConvertableNumeral);
+}
+
+/**
+ * Convert an arabic numeral to an english word
+ */
+string NumeralToEnglish(int num) {
+    switch (num) {
+        case 0:
+            return "zero";
+        case 1:
+            return "one once";
+        case 2:
+            return "two twice";
+        case 3:
+            return "three";
+        case 4:
+            return "four";
+        case 5:
+            return "five";
+        case 6:
+            return "six";
+        case 7:
+            return "seven";
+        case 8:
+            return "eight";
+        case 9:
+            return "nine";
+        case 10:
+            return "ten";
+    }
+    
+    return "";
+}

@@ -70,10 +70,17 @@ vector<string> StripSnippets(ofxJSONElement &json) {
 }
 
 int CountAnswerOccurrences(string source, string answer) {
-    vector<string> pieces = Split(answer, ' ');
+    string processed_answer = answer;
+    
+    if (IsConvertableNumber(source)) {
+        int value = stoi(source);
+        processed_answer.append(" ");
+        processed_answer.append(NumeralToEnglish(value));
+    }
+    
+    vector<string> pieces = Split(processed_answer, ' ');
     
     int count = 0;
-    
     for (string &piece : pieces) {
         count += Count(source, piece);
     }
@@ -112,7 +119,7 @@ void ProcessBasic(ofxJSONElement &json, string question, vector<string> answers,
         string lower_snippet = ToLowerCase(snippet);
         
         for (int i = 0; i < answers.size(); i++) {
-            int count = CountAnswerOccurrences(lower_snippet, lower_answers[i]);
+            int count = CountAnswerOccurrences(lower_snippet, lower_answers[i]) * (answers.size() - i);
             confidences[i] += count;
             
             if (confidences[i] > max_count) {
@@ -139,6 +146,11 @@ void ProcessBasic(ofxJSONElement &json, string question, vector<string> answers,
  */
 void Investigate(string question, vector<string> answers) {
     SearchCred &credentials = ChooseCredentials();
+    Category category = GetCategory(question);
     
-    SearchBasic(credentials, question, answers);
+    switch (category) {
+        case SimpleFact:
+            SearchBasic(credentials, question, answers);
+            break;
+    }
 }

@@ -20,8 +20,9 @@ A (somewhat) flexible order of events and ideal deadlines
 - [x] Create shell auto test scripts to run question answer scenarios
 
 ## Week 3 - (April 24 - May 1)
+- [x] Write script to automatically determine accuracy of Holmes with large sample set
+- [x] Change weighting based on how early a result comes up
+- [x] Convert number answers to english representations and check for those as well
 - [ ] More complex weighting using multiple sources like Wikipedia
 - [ ] Question categories change the way the searches work
-- [ ] Automatic accuracy testing with question bank
 - [ ] Update README.md to have final project information and how-to guide
-- [ ] Record live game (?)

@@ -4,16 +4,23 @@
 #include "search_cred.hpp"
 #include "sleuth.hpp"
 #include "mitm.hpp"
+#include "categorizer.hpp"
 #import "Holmes-Swift.h"
 
 using std::string;
 using std::cout;
 using std::endl;
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
     
 private:
     vector<string> args_;
+    
+    int current_test_question_ = 0;
+    vector<string> test_questions_;
+    vector<vector<string>> test_answers_;
+    string correct_test_answer_ = "";
+    int correct_test_count_ = 0;
     
     ofImage iphone_x_;
     ofImage iphone_x_connected_;
@@ -43,13 +50,21 @@ private:
     bool found_answer_ = true;
     
     // Minimum confidence that the confidence bar will render accurately
-    double min_confidence_ = 0.20;
+    double min_render_confidence_ = 0.20;
+    
+    // Current min confidence (should equal the smallest value in the vector)
+    double min_confidence_ = 0.10;
     
     // Current max confidence (should equal the largest value in the vector)
     double max_confidence_ = 0.90;
     
+    // Whether to use the max (false) or min (true) confidence
+    bool should_negate_ = false;
+    
     // Using a socket connection vs command line
     bool using_socket_ = true;
+    
+    bool is_test_ = false;
 
 public:
     /* SETUP */
@@ -59,6 +74,13 @@ public:
      * Process the command line arguments
      */
     void ProcessArguments();
+    
+    /**
+     * Process the questions and answers from the given file
+     *
+     * @param source the file to load
+     */
+    void ProcessTestFile(string source);
     
     /**
      * Print and process the command line arguments if there are any
@@ -109,6 +131,11 @@ public:
      * Check for the answers to be updated
      */
     void CheckForAnswer();
+    
+    /**
+     * Continue testing if applicable, accepting next question
+     */
+    void AdvanceTesting();
     
     /* DRAW */
     void draw();
