@@ -66,6 +66,7 @@ void Mitm::EmulatePhoneConnection() {
         PrintColorful("Received JSON content:", MAGENTA);
         cout << json_content << endl;
         
+        // Convert string to JSON object
         ofxJSONElement json(json_content);
         broadcast_json_ = json;
     } catch (const Poco::Exception &exception) {
@@ -123,7 +124,6 @@ void Mitm::ParseMessage(ofxJSONElement &json, string &question_dest, vector<stri
     
     question = json["question"].asString();
     for (int i = 0; i < kAnswerCount; i++) {
-        // TODO
         answers.push_back(json["answers"][i]["text"].asString());
     }
     

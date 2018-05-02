@@ -13,7 +13,7 @@ class SearchCred {
 private:
     string api_key_;
     string cx_code_;
-    string url_ = "https://www.googleapis.com/customsearch/v1?prettyPrint=false&fields=items(title,snippet)&key=API_KEY&cx=CX_CODE&q=";
+    string google_url_ = "https://www.googleapis.com/customsearch/v1?prettyPrint=false&fields=items(title,snippet)&key=API_KEY&cx=CX_CODE&q=";
     string wikipedia_url_ = "https://en.wikipedia.org/w/api.php?action=query&list=search&&srprop=snippet&srinfo=&format=json&srlimit=100&srsearch=";
     
 public:
@@ -38,7 +38,7 @@ public:
      * @param query the text to search for
      * @return the url for the Google Custom Search
      */
-    string GetUrl(string query);
+    string GetGoogleUrl(string query);
     
     /**
      * Get the url for the Wikimedia API search for a given question
@@ -47,6 +47,15 @@ public:
      * @return the url for the Wikimedia search
      */
     string GetWikipediaUrl(string query);
+    
+    /**
+     * Build the url from a base and encode the query
+     *
+     * @param base the base of the URL that accepts a query at the end
+     * @param query the item to encode onto the end of the url
+     * @return the encoded and prepared url
+     */
+    string BuildUrl(string base, string query);
     
 };
 

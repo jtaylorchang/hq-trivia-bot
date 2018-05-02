@@ -21,9 +21,11 @@ A (somewhat) flexible order of events and ideal deadlines
 
 ## Week 3 - (April 24 - May 1)
 - [x] Write script to automatically determine accuracy of Holmes with larger sample set
-- [x] Change weighting based on how early a result comes up
+- [x] Tested weighting based on how early a result comes up
 - [x] Convert number answers to english representations and check for those as well
 - [x] More complex weighting using multiple sources like Wikipedia
 - [x] Filter some simple small words to avoid result confusion
+- [x] Handles negation questions and chooses least results
 - [x] Provide comprehensive results after automated accuracy testing
-- [ ] Update README.md to have final project information and how-to guide
+- [x] Added basic tests to check utility functions operated properly
+- [x] Update README.md to have final project information and how-to guide

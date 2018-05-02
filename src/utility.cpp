@@ -49,6 +49,10 @@ bool ApproxEquals(double first, double second) {
  * Replace a given value with a new value in a string
  */
 string Replace(string source, string old_value, string new_value) {
+    if (source.empty() || old_value.empty()) {
+        return source;
+    }
+    
     string new_string = source;
     std::size_t old_pos = new_string.find(old_value);
     
@@ -134,6 +138,9 @@ string ToLowerCase(string source) {
     return lower_str;
 }
 
+/**
+ * URL Encodes a given string
+ */
 string UrlEncode(string source) {
     string encoded_str = Trim(source);
     
@@ -184,7 +191,7 @@ int Count(string source, string search_str) {
                 }
                 
                 if (source[i + search_index] != search_str[search_index]) {
-                    // Not a match
+                    // Not a match so advance to the latest possible starting location
                     if (furthest_start > i) {
                         i = furthest_start - 1;
                     }
@@ -271,11 +278,15 @@ string NumeralToEnglish(int num) {
     return "";
 }
 
+/**
+ * Check if a word is complex enough to include in searching
+ */
 bool IsComplex(string word) {
     string lower_word = ToLowerCase(word);
     
     for (string simple_word : kSimpleWords) {
         if (lower_word == simple_word) {
+            // Matches a simple word
             return false;
         }
     }
@@ -283,6 +294,9 @@ bool IsComplex(string word) {
     return true;
 }
 
+/**
+ * Add color codes into the console output (only works on Mac terminal)
+ */
 void SetConsoleColor(ConsoleColor color) {
     switch (color) {
         case WHITE:
@@ -309,6 +323,9 @@ void SetConsoleColor(ConsoleColor color) {
     }
 }
 
+/**
+ * Prints a message using a specific color then resets
+ */
 void PrintColorful(string message, ConsoleColor color) {
     SetConsoleColor(color);
     cout << message << endl;

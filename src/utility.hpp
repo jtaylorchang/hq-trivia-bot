@@ -27,13 +27,13 @@ const vector<string> kUrlEncodeKeys = {
     "\n", "%", "~", ".", "!", "*", "(", ")", "'", "\"", "&", "#", "?", " "
 };
 const vector<string> kUrlEncodeValues = {
-    " ", "%25", "%7E", "%2E", "%21", "%2A", "%28", "%29", "%27", "%22", "%26", "%23", "%3F", "%20"
+    " ", "", "%7E", "%2E", "%21", "%2A", "%28", "%29", "%27", "%22", "%26", "%23", "%3F", "%20"
 };
 
 const int kMaxConvertableNumeral = 10;
 
 const vector<string> kSimpleWords = {
-    "a", "i", "to", "is", "not", "the", "can", "and"
+    "", "a", "an", "i", "to", "is", "not", "the", "can", "and"
 };
 
 enum ConsoleColor {
@@ -183,10 +183,27 @@ bool IsConvertableNumber(string source);
  */
 string NumeralToEnglish(int num);
 
+/**
+ * Check if a word is complex enough to include in searching
+ *
+ * @param word the word to check
+ * @return if the word is complex
+ */
 bool IsComplex(string word);
 
+/**
+ * Add color codes into the console output (only works on Mac terminal)
+ *
+ * @param color the color to use (from an enum)
+ */
 void SetConsoleColor(ConsoleColor color);
 
+/**
+ * Prints a message using a specific color then resets
+ *
+ * @param message the message to print
+ * @param color the color to use
+ */
 void PrintColorful(string message, ConsoleColor color);
 
 #endif /* utility_hpp */

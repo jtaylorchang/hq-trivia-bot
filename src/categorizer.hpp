@@ -37,6 +37,11 @@ const vector<string> negations_ = {
  */
 bool GetNegation(string question);
 
+/*
+ * NOTE: The following code is not implemented nor a part of the project.
+ * It is an idea of a way to extend the project outside the scopes of the class
+ */
+
 /**
  * Get the category of the given question
  *

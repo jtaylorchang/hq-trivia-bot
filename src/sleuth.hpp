@@ -59,7 +59,7 @@ public:
     void ReceiveResponse(ofHttpResponse &response, string question, vector<string> answers, vector<double> &confidences);
 
     /**
-     * Get the JSON for Google CSE for the given query
+     * Get the JSON for the given query
      *
      * @param cred the credentials to use
      * @param query the text to search
@@ -80,8 +80,14 @@ public:
      * @param json the json to process
      * @return a vector of string snippets
      */
-    vector<string> StripSnippets(ofxJSONElement &json);
+    vector<string> StripGoogleSnippets(ofxJSONElement &json);
     
+    /**
+     * Strip the snippets from the wikipedia JSON data
+     *
+     * @param json the json to process
+     * @return a vector of string snippets
+     */
     vector<string> StripWikipediaSnippets(ofxJSONElement &json);
 
     /**
@@ -94,18 +100,31 @@ public:
     int CountAnswerOccurrences(string source, string answer);
 
     /**
-     * Increase confidence levels using the default search
+     * Increase confidence levels using the default Google search
      *
      * @param cred the credentials to use
      * @param question the question to search
      * @param answers the possible answers
      */
-    void SearchBasic(SearchCred &cred, string question, vector<string> answers);
+    void SearchGoogleBasic(SearchCred &cred, string question, vector<string> answers);
 
+    /**
+     * Increase confidence levels using the default search premise on Wikipedia
+     *
+     * @param cred the credential object to use
+     * @param question the question to search
+     * @param answers the possible answers
+     */
     void SearchWikipediaBasic(SearchCred &cred, string question, vector<string> answers);
 
-    void FinalizeResults(vector<double> &confidences);
-
+    /**
+     * Modifies the confidence values using the given snippets and answers to look for.
+     * Same method applies for both Google and Wikipedia results
+     *
+     * @param snippets the vector of snippets to look through
+     * @param lower_answers the vector of answers to look for
+     * @param confidences the confidence vector destination
+     */
     void ProcessResponse(vector<string> snippets, vector<string> lower_answers, vector<double> &confidences);
     
     /**
@@ -116,10 +135,28 @@ public:
      * @param answers the potential answers
      * @param confidences the confidence vector to update
      */
-    void ProcessBasic(ofxJSONElement &json, string question, vector<string> answers, vector<double> &confidences);
+    void ProcessGoogleBasic(ofxJSONElement &json, string question, vector<string> answers,
+                            vector<double> &confidences);
 
-    void ProcessWikipediaBasic(ofxJSONElement &json, string question, vector<string> answers, vector<double> &confidences);
+    /**
+     * Process the results from the basic Wikipedia search
+     *
+     * @param json the JSON to process
+     * @param question the question to answer
+     * @param answers the potential answers
+     * @param confidences the confidence vector to update
+     */
+    void ProcessWikipediaBasic(ofxJSONElement &json, string question, vector<string> answers,
+                               vector<double> &confidences);
 
+    
+    /**
+     * Finalize the result confidences and normalize them to be all out of 1.0
+     *
+     * @param confidences the confidence vector destination
+     */
+    void FinalizeResults(vector<double> &confidences);
+    
     /**
      * Start the JSON collection for the given question
      *

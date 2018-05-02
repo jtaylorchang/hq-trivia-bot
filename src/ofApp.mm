@@ -41,6 +41,10 @@ const int kAnswerRectOffset = kQuestionRectPadding + kQuestionRectHeight - (kAns
 const int kAnswerRectRounding = kAnswerRectHeight / 2;
 const int kAnswerLineWidth = 2;
 
+const int kConfidenceNotSet = -1;
+const int kMaxConfidenceNotSet = -1;
+const int kMinConfidenceNotSet = 1;
+
 /* GRAPHICS OBJECTS */
 
 const ofRectangle kQuestionBox((kWidth - kQuestionRectWidth) / 2,
@@ -73,6 +77,7 @@ void ofApp::ProcessArguments() {
     cout << "Processing commandline arguments" << endl;
     
     if (!is_test_) {
+        // Load single question and answers
         question_ = Trim(args_[kQuestionArgIndex]);
         
         for (int i = 0; i < kAnswerCount; i++) {
@@ -81,6 +86,7 @@ void ofApp::ProcessArguments() {
         
         is_manual_ = true;
     } else {
+        // Load all the questions and answers to test with
         string source = args_[kTestFileArgIndex];
         ProcessTestFile(source);
         
@@ -105,7 +111,6 @@ void ofApp::ProcessTestFile(string source) {
     json.open(source);
     
     cout << "Parsed test JSON:" << endl;
-    //cout << json.getRawString(true) << endl;
     
     std::size_t size = json["questions"].size();
     for (Json::ArrayIndex i = 0; i < size; i++) {
@@ -134,9 +139,11 @@ void ofApp::SetupArguments() {
     }
     
     if (args_.size() >= kMinArgCount) {
+        // Manually running a question
         cout << "Applying arguments for running" << endl;
         ProcessArguments();
     } else if (args_.size() == kTestArgCount) {
+        // Automated testing with question bank or an error
         if (args_[kTestArgIndex] == "test") {
             cout << "Applying arguments for testing" << endl;
             is_test_ = true;
@@ -224,6 +231,7 @@ void ofApp::UpdateSocket() {
         
         if (!latest_message.empty()) {
             if (latest_message != mitm_.GetLatestMessage()) {
+                // Received a new message since it is different than the previously stored one
                 PrintColorful("Received new message: " + latest_message, YELLOW);
                 
                 found_answer_ = false;
@@ -231,6 +239,9 @@ void ofApp::UpdateSocket() {
                 
                 mitm_.SetLatestMessage(latest_message);
                 mitm_.UpdateFromMessage(question_, answers_);
+                
+                // Format properly to fit in the bounds
+                question_ = BreakIntoLines(question_, kQuestionLineWidth);
                 
                 ResetConfidences();
             }
@@ -264,11 +275,11 @@ void ofApp::ResetConfidences() {
     cout << "Resetting confidence levels" << endl;
     
     for (int i = 0; i < kAnswerCount; i++) {
-        confidences_[i] = -1;
+        confidences_[i] = kConfidenceNotSet;
     }
     
-    max_confidence_ = -1;
-    min_confidence_ = 1;
+    max_confidence_ = kMaxConfidenceNotSet;
+    min_confidence_ = kMinConfidenceNotSet;
 }
 
 /**
@@ -276,7 +287,9 @@ void ofApp::ResetConfidences() {
  */
 void ofApp::CheckForAnswer() {
     if(!found_answer_) {
+        // Check to see if the answer has been chosen
         if (max_confidence_ < 0 && sleuth_.finished_basic_ && sleuth_.finished_wikipedia_basic_) {
+            // Confidence levels have been finalized
             for (double confidence : confidences_) {
                 if (confidence > max_confidence_ && confidence >= 0) {
                     max_confidence_ = confidence;
@@ -290,7 +303,8 @@ void ofApp::CheckForAnswer() {
             }
         }
     } else {
-        if (!done_testing_ && !is_manual_) {
+        if (!done_testing_ && !is_manual_ && !using_socket_) {
+            // Only runs during automated testing. Choose the answer and continue testing
             for (int i = 0; i < kAnswerCount; i++) {
                 if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
                     chosen_answer_ = answers_[i];
@@ -345,9 +359,9 @@ void ofApp::PrintTestResults() {
     cout << "Test has concluded" << endl;
     
     int correct_count = 0;
-    
     for (int i = 0; i < correct_answers_.size(); i++) {
         if (!correct_answers_[i]) {
+            // Only give data on incorrect choices
             cout << "Got question incorrect: " << endl;
             PrintColorful("Question: " + test_questions_[i], YELLOW);
             PrintColorful("Should have chosen: " + test_answers_[i][kAnswerCount], GREEN);
@@ -355,6 +369,7 @@ void ofApp::PrintTestResults() {
             
             cout << "Choices: " << endl;
             for (int answer_index = 0; answer_index < kAnswerCount; answer_index++) {
+                // Print out the confidences that went into making the decision
                 cout << " :" << test_answers_[i][answer_index] << endl;
                 cout << " : confidence :" << test_confidences_[i][answer_index] << endl;
             }
