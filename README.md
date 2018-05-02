@@ -51,11 +51,11 @@ The application can be run in four modes:
 
 - ### Web Socket
 
-    To be continued.
+    The obvious first question is, how do I get the question data from HQ's servers. The answer is that they have next to no actual security. Using a `MITM` approach, it was very simple to pull out the necessary headers and web calls that HQ client devices used to authenticate with the HQ API, and some quick probing of the server revealed their external API pretty nicely. Once I understood how they processed authentication, it was fairly simple to modify an HTTP request to simulate authentication, and in response they send information on the socket location which changes each game. Using Swift, I hook into the web socket and pass back any relevant JSON data to the C++ portion of the project for processing. The Swift bridge simply facilitates and filters the stream of constant JSON from HQ's server.
 
 - ### Trivia Solving
 
-    To be continued.
+    The real meat of the project is in solving trivia questions, regardless of how they are received, as the project supports many ways of getting trivia questions as detailed above. In order to solve questions, `Holmes` aggregates data from Google CSE and Wikimedia API and processes the data looking for relevant parts of answers. It filters out confusion data, that is words that are unlikely to be relevant to the answer and just add noise, and it checks for simple negations. Ultimately, it generates 3 confidence values which represent how often each answer was found when looking for the question. If the question is not negated, it simply chooses the answer with the highest confidence, otherwise it chooses the question with the lowest confidence. In the even of two answers being equal, it can decide both which indicates it is unsure which.
 
 # Languages and libraries
 
@@ -95,3 +95,7 @@ Since the majority of the code requires making actual calls or contacting a serv
     - https://github.com/bakercp/ofxNetworkUtils/tree/stable
     - https://github.com/jeffcrouse/ofxJSON
     - https://github.com/tidwall/SwiftWebSocket
+
+# Disclaimer
+
+I do __NOT__ endorse cheating. Using a bot like this during a live game for the purposes of making money is strictly against HQ's Terms of Service and will result in your account being banned if you are caught. Using a bot that connects to their server is allowed but using it to win a live trivia game for money is a strict violation.
