@@ -33,7 +33,7 @@ const vector<string> kUrlEncodeValues = {
 const int kMaxConvertableNumeral = 10;
 
 const vector<string> kSimpleWords = {
-    "", "a", "an", "i", "to", "is", "not", "the", "can", "and"
+    "", "a", "an", "i", "to", "is", "not", "the", "can", "and", "of", "da"
 };
 
 enum ConsoleColor {

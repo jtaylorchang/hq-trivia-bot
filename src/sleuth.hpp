@@ -30,7 +30,13 @@ private:
         SearchCred("AIzaSyBYQcnGoPS1U_4gNZax8ha-XjuFEBIuv6o",
                    "015228221608509576590:togix_mvjza"),
         SearchCred("AIzaSyBeLv2dwgH6UGnmVkeO6PkH0qqGn-Cjznw",
-                   "016956300416314494911:qmqbjx-nre4")
+                   "016956300416314494911:qmqbjx-nre4"),
+        SearchCred("AIzaSyBJzX61a3Tzdw0OZUxE_l0WXEkDZ9qF8UM",
+                   "005382590508470163870:z6zjzrahnfo"),
+        SearchCred("AIzaSyBetFvP2q8ftqYFLMz2mZhLKftB1M4umv8",
+                   "013433297820653323692:m6nyodgncm8"),
+        SearchCred("AIzaSyDhBKJlwzcymLMeZPbFleZZWwy1nxpJNF0",
+                   "013936195782275847984:fiqc1zogjp4")
     };
 
 public:
