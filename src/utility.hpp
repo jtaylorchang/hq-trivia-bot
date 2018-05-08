@@ -18,6 +18,7 @@
 using std::string;
 using std::vector;
 using std::map;
+using std::cin;
 using std::cout;
 using std::endl;
 
@@ -205,5 +206,12 @@ void SetConsoleColor(ConsoleColor color);
  * @param color the color to use
  */
 void PrintColorful(string message, ConsoleColor color);
+
+/**
+ * Get a string input from the commandline
+ *
+ * @return the string
+ */
+string ReceiveString();
 
 #endif /* utility_hpp */

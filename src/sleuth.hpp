@@ -38,21 +38,24 @@ private:
         SearchCred("AIzaSyDhBKJlwzcymLMeZPbFleZZWwy1nxpJNF0",
                    "013936195782275847984:fiqc1zogjp4")
     };
-
+    
+    const double kGoogleWeight = 2;
+    const double kWikipediaWeight = 1;
+    
 public:
     int basic_search_id_ = -1;
     int basic_wikipedia_search_id_ = -1;
     int result_max_count_ = 0;
     bool finished_basic_ = false;
     bool finished_wikipedia_basic_ = false;
-
+    
     /**
      * Chooses a random set of credentials to use to distribute searches across multiple
      *
      * @return the credentials to use
      */
     SearchCred &ChooseCredentials();
-
+    
     /**
      * Receive the response from the urlResponse event
      *
@@ -63,7 +66,7 @@ public:
      * @param max_confidence the max confidence destination double
      */
     void ReceiveResponse(ofHttpResponse &response, string question, vector<string> answers, vector<double> &confidences);
-
+    
     /**
      * Get the JSON for the given query
      *
@@ -72,14 +75,14 @@ public:
      * @return the JSON results
      */
     ofxJSONElement LoadSearchResults(string content);
-
+    
     /**
      * Prepare the confidence vector to accept answer counts
      *
      * @param confidences the reference to the confidence vector
      */
     void PrepareConfidences(vector<double> &confidences);
-
+    
     /**
      * Strip the snippets from the given JSON data
      *
@@ -95,7 +98,7 @@ public:
      * @return a vector of string snippets
      */
     vector<string> StripWikipediaSnippets(ofxJSONElement &json);
-
+    
     /**
      * Count the number of times a piece of the answer occurs in the source
      *
@@ -104,7 +107,7 @@ public:
      * @return the number of occurrences of each piece
      */
     int CountAnswerOccurrences(string source, string answer);
-
+    
     /**
      * Increase confidence levels using the default Google search
      *
@@ -113,7 +116,7 @@ public:
      * @param answers the possible answers
      */
     void SearchGoogleBasic(SearchCred &cred, string question, vector<string> answers);
-
+    
     /**
      * Increase confidence levels using the default search premise on Wikipedia
      *
@@ -122,7 +125,7 @@ public:
      * @param answers the possible answers
      */
     void SearchWikipediaBasic(SearchCred &cred, string question, vector<string> answers);
-
+    
     /**
      * Modifies the confidence values using the given snippets and answers to look for.
      * Same method applies for both Google and Wikipedia results
@@ -130,8 +133,9 @@ public:
      * @param snippets the vector of snippets to look through
      * @param lower_answers the vector of answers to look for
      * @param confidences the confidence vector destination
+     * @param weight the weighting for the counts
      */
-    void ProcessResponse(vector<string> snippets, vector<string> lower_answers, vector<double> &confidences);
+    void ProcessResponse(vector<string> snippets, vector<string> lower_answers, vector<double> &confidences, double weight);
     
     /**
      * Process the basic search JSON and update the confidence levels
@@ -143,7 +147,7 @@ public:
      */
     void ProcessGoogleBasic(ofxJSONElement &json, string question, vector<string> answers,
                             vector<double> &confidences);
-
+    
     /**
      * Process the results from the basic Wikipedia search
      *
@@ -154,7 +158,7 @@ public:
      */
     void ProcessWikipediaBasic(ofxJSONElement &json, string question, vector<string> answers,
                                vector<double> &confidences);
-
+    
     
     /**
      * Finalize the result confidences and normalize them to be all out of 1.0
@@ -170,7 +174,8 @@ public:
      * @param answers the vector of possible answers
      */
     void Investigate(string question, vector<string> answers);
-
-};
     
+};
+
 #endif /* sleuth_hpp */
+

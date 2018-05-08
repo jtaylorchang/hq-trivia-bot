@@ -11,6 +11,9 @@ const int kTestArgIndex = 0;
 const int kTestFileArgIndex = 1;
 const int kMinArgCount = 3;
 const int kQuestionArgIndex = 0;
+const int kSlaveArgCount = 1;
+const int kSlaveArgIndex = 0;
+
 const int kQuestionLineWidth = 16;
 
 const ofColor kWhiteColor(255, 255, 255);
@@ -52,9 +55,9 @@ const ofRectangle kQuestionBox((kWidth - kQuestionRectWidth) / 2,
                                kQuestionRectWidth,
                                kQuestionRectHeight);
 const ofRectangle kAnswerBox((kWidth - kAnswerRectWidth) / 2,
-                              kAnswerRectOffset,
-                              kAnswerRectWidth,
-                              kAnswerRectHeight);
+                             kAnswerRectOffset,
+                             kAnswerRectWidth,
+                             kAnswerRectHeight);
 
 /* SETUP */
 
@@ -76,16 +79,7 @@ void ofApp::setup() {
 void ofApp::ProcessArguments() {
     cout << "Processing commandline arguments" << endl;
     
-    if (!is_test_) {
-        // Load single question and answers
-        question_ = Trim(args_[kQuestionArgIndex]);
-        
-        for (int i = 0; i < kAnswerCount; i++) {
-            answers_[i] = Trim(args_[i + 1]);
-        }
-        
-        is_manual_ = true;
-    } else {
+    if (is_test_) {
         // Load all the questions and answers to test with
         string source = args_[kTestFileArgIndex];
         ProcessTestFile(source);
@@ -94,13 +88,29 @@ void ofApp::ProcessArguments() {
         for (int i = 0; i < kAnswerCount; i++) {
             answers_[i] = test_answers_[0][i];
         }
+        
+        found_answer_ = false;
+        answering_ = false;
+        ResetConfidences();
+    } else if (is_slave_) {
+        // Prepare to receive answer from master
+        found_answer_ = true;
+        answering_ = false;
+    } else {
+        // Load single question and answers
+        question_ = Trim(args_[kQuestionArgIndex]);
+        
+        for (int i = 0; i < kAnswerCount; i++) {
+            answers_[i] = Trim(args_[i + 1]);
+        }
+        
+        is_manual_ = true;
+        found_answer_ = false;
+        answering_ = false;
+        ResetConfidences();
     }
     
     using_socket_ = false;
-    found_answer_ = false;
-    answering_ = false;
-    
-    ResetConfidences();
 }
 
 /**
@@ -151,6 +161,15 @@ void ofApp::SetupArguments() {
         } else {
             cout << "Wrong number of arguments" << endl;
         }
+    } else if (args_.size() == kSlaveArgCount) {
+        // Slave to external program
+        if (args_[kSlaveArgIndex] == "slave") {
+            cout << "Running in slave mode" << endl;
+            is_slave_ = true;
+            ProcessArguments();
+        }
+    } else {
+        cout << "Not processing arguments" << endl;
     }
     
     question_ = BreakIntoLines(question_, kQuestionLineWidth);
@@ -234,16 +253,10 @@ void ofApp::UpdateSocket() {
                 // Received a new message since it is different than the previously stored one
                 PrintColorful("Received new message: " + latest_message, YELLOW);
                 
-                found_answer_ = false;
-                answering_ = false;
-                
                 mitm_.SetLatestMessage(latest_message);
                 mitm_.UpdateFromMessage(question_, answers_);
                 
-                // Format properly to fit in the bounds
-                question_ = BreakIntoLines(question_, kQuestionLineWidth);
-                
-                ResetConfidences();
+                UpdateQuestion(question_, answers_);
             }
         }
     }
@@ -255,6 +268,49 @@ void ofApp::UpdateSocket() {
 string ofApp::GetLatestMessage() {
     string value = string([SocketHandler.latest_message UTF8String]);
     return value;
+}
+
+/**
+ * Get the latest message from the external provider
+ */
+void ofApp::WaitForMaster() {
+    cout << "Waiting for command from master" << endl;
+    string query = ReceiveString();
+    vector<string> pieces = Split(query, '@');
+    
+    if(pieces.size() > kAnswerCount) {
+        string question = pieces[0];
+        vector<string> answers;
+        for (int i = 0; i < kAnswerCount; i++) {
+            answers.push_back(pieces[i + 1]);
+        }
+        
+        UpdateQuestion(question, answers);
+    } else {
+        WaitForMaster();
+    }
+}
+
+/**
+ * Update the current question and answers and prepare to look for results
+ */
+void ofApp::UpdateQuestion(string question, vector<string> answers) {
+    cout << "Updating current question and answers" << endl;
+    PrintColorful("Question: " + question, YELLOW);
+    
+    for (int i = 0; i < answers.size(); i++) {
+        PrintColorful("Answer: " + answers[i], YELLOW);
+    }
+    
+    found_answer_ = false;
+    answering_ = false;
+    
+    if (!Contains(question, "\n")) {
+        question_ = BreakIntoLines(question, kQuestionLineWidth);
+        answers_ = answers;
+    }
+    
+    ResetConfidences();
 }
 
 /**
@@ -288,22 +344,26 @@ void ofApp::ResetConfidences() {
 void ofApp::CheckForAnswer() {
     if(!found_answer_) {
         // Check to see if the answer has been chosen
-        if (max_confidence_ < 0 && sleuth_.finished_basic_ && sleuth_.finished_wikipedia_basic_) {
-            // Confidence levels have been finalized
-            for (double confidence : confidences_) {
-                if (confidence > max_confidence_ && confidence >= 0) {
-                    max_confidence_ = confidence;
-                    found_answer_ = true;
-                }
-                
-                if (confidence < min_confidence_ && confidence >= 0) {
-                    min_confidence_ = confidence;
-                    found_answer_ = true;
+        if (sleuth_.finished_basic_ && sleuth_.finished_wikipedia_basic_) {
+            if (max_confidence_ < 0) {
+                // Confidence levels have been finalized
+                for (double confidence : confidences_) {
+                    if (confidence > max_confidence_ && confidence >= 0) {
+                        max_confidence_ = confidence;
+                        found_answer_ = true;
+                        answering_ = false;
+                    }
+                    
+                    if (confidence < min_confidence_ && confidence >= 0) {
+                        min_confidence_ = confidence;
+                        found_answer_ = true;
+                        answering_ = false;
+                    }
                 }
             }
         }
     } else {
-        if (!done_testing_ && !is_manual_ && !using_socket_) {
+        if (!done_testing_ && !is_manual_ && !using_socket_ && !is_slave_) {
             // Only runs during automated testing. Choose the answer and continue testing
             for (int i = 0; i < kAnswerCount; i++) {
                 if (ApproxEquals(confidences_[i], max_confidence_) && !should_negate_) {
@@ -317,6 +377,11 @@ void ofApp::CheckForAnswer() {
             
             if (is_test_) {
                 AdvanceTesting();
+            }
+        } else {
+            if (is_slave_ && !answering_) {
+                // Running in slave mode, need to get new input
+                WaitForMaster();
             }
         }
     }
@@ -342,9 +407,7 @@ void ofApp::AdvanceTesting() {
             answers_[i] = test_answers_[current_test_index_][i];
         }
         
-        found_answer_ = false;
-        answering_ = false;
-        ResetConfidences();
+        UpdateQuestion(question_, answers_);
     } else {
         // Print the final results
         done_testing_ = true;
@@ -575,3 +638,4 @@ void ofApp::dragEvent(ofDragInfo dragInfo) {}
 void ofApp::SetArgs(vector<string> args) {
     args_ = args;
 }
+

@@ -26,7 +26,7 @@ enum Category {
 };
 
 const vector<string> negations_ = {
-    "not", "n't"
+    "not", "n't", "never"
 };
 
 /**
@@ -51,3 +51,4 @@ bool GetNegation(string question);
 Category GetCategory(string question);
 
 #endif /* categorizer_hpp */
+

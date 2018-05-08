@@ -133,7 +133,7 @@ void Sleuth::SearchWikipediaBasic(SearchCred &cred, string question, vector<stri
  * Modifies the confidence values using the given snippets and answers to look for.
  * Same method applies for both Google and Wikipedia results
  */
-void Sleuth::ProcessResponse(vector<string> snippets, vector<string> lower_answers, vector<double> &confidences) {
+void Sleuth::ProcessResponse(vector<string> snippets, vector<string> lower_answers, vector<double> &confidences, double weight) {
     for (string &snippet : snippets) {
         cout << "Reading snippet:" << endl;
         cout << snippet << endl;
@@ -143,7 +143,7 @@ void Sleuth::ProcessResponse(vector<string> snippets, vector<string> lower_answe
         for (int i = 0; i < lower_answers.size(); i++) {
             int count = CountAnswerOccurrences(lower_snippet, lower_answers[i]);
             // Possibility to weight based on how early a result is: * (lower_answers.size() - i);
-            confidences[i] += count;
+            confidences[i] += weight * count;
             
             cout << "Found count [" << count << "] for answer " << (i + 1) << endl << endl;
         }
@@ -163,7 +163,7 @@ void Sleuth::ProcessGoogleBasic(ofxJSONElement &json, string question, vector<st
         lower_answers[i] = ToLowerCase(Trim(lower_answers[i]));
     }
     
-    ProcessResponse(snippets, lower_answers, confidences);
+    ProcessResponse(snippets, lower_answers, confidences, kGoogleWeight);
     finished_basic_ = true;
 }
 
@@ -180,7 +180,7 @@ void Sleuth::ProcessWikipediaBasic(ofxJSONElement &json, string question, vector
         lower_answers[i] = ToLowerCase(Trim(lower_answers[i]));
     }
     
-    ProcessResponse(snippets, lower_answers, confidences);
+    ProcessResponse(snippets, lower_answers, confidences, kWikipediaWeight);
     finished_wikipedia_basic_ = true;
 }
 
@@ -227,3 +227,4 @@ void Sleuth::Investigate(string question, vector<string> answers) {
             break;
     }
 }
+

@@ -331,3 +331,12 @@ void PrintColorful(string message, ConsoleColor color) {
     cout << message << endl;
     SetConsoleColor(WHITE);
 }
+
+/**
+ * Get a string input from the commandline
+ */
+string ReceiveString() {
+    string response;
+    getline(cin, response);
+    return response;
+}

@@ -78,7 +78,10 @@ private:
     
     // Using automated test data
     bool is_test_ = false;
-
+    
+    // Using external master program
+    bool is_slave_ = false;
+    
 public:
     /* SETUP */
     void setup();
@@ -129,6 +132,19 @@ public:
      * @return the latest message converted from NSString to std::string
      */
     string GetLatestMessage();
+    
+    /**
+     * Get the latest message from the external provider
+     */
+    void WaitForMaster();
+    
+    /**
+     * Update the current question and answers and prepare to look for results
+     *
+     * @param question the question to use
+     * @param answers the answer vector
+     */
+    void UpdateQuestion(string question, vector<string> answers);
     
     /**
      * Find the answer to the given question
@@ -244,5 +260,6 @@ public:
     /* GETTERS AND SETTERS */
     
     void SetArgs(vector<string> args);
-		
+    
 };
+
