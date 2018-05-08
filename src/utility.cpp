@@ -340,3 +340,27 @@ string ReceiveString() {
     getline(cin, response);
     return response;
 }
+
+/**
+ * Get the contents of a file as a string
+ */
+string ReadFileAsString(const std::string &file_path) {
+    string contents = "";
+    
+    if (file_path.empty()) {
+        return contents;
+    }
+    
+    std::ifstream stream;
+    stream.open(file_path);
+    if (stream) {
+        // File exists
+        string line;
+        while (getline(stream, line)) {
+            contents += line;
+        }
+    }
+    
+    stream.close();
+    return contents;
+}

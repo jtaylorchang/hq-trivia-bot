@@ -5,6 +5,7 @@
 #include "sleuth.hpp"
 #include "mitm.hpp"
 #include "categorizer.hpp"
+#include "bridge.hpp"
 #import "Holmes-Swift.h"
 
 using std::string;
@@ -32,6 +33,7 @@ private:
     
     Sleuth sleuth_;
     Mitm mitm_;
+    Bridge bridge_;
     
     /* GRAPHICS VARIABLES */
     
@@ -132,11 +134,6 @@ public:
      * @return the latest message converted from NSString to std::string
      */
     string GetLatestMessage();
-    
-    /**
-     * Get the latest message from the external provider
-     */
-    void WaitForMaster();
     
     /**
      * Update the current question and answers and prepare to look for results

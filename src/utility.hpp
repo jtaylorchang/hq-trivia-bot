@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
 
 using std::string;
 using std::vector;
@@ -213,5 +214,13 @@ void PrintColorful(string message, ConsoleColor color);
  * @return the string
  */
 string ReceiveString();
+
+/**
+ * Get the contents of a file as a string
+ *
+ * @param file_path the path to the file
+ * @return the string contents
+ */
+string ReadFileAsString(const std::string &file_path);
 
 #endif /* utility_hpp */

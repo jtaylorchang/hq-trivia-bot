@@ -43,6 +43,7 @@
 		69AF35586CA18EA57C5CFCD3 /* NetworkUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B557FD8519CC0900FAB1DCA2 /* NetworkUtils.cpp */; };
 		6A1BEEF909B46E3410B48E55 /* BaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C865B7340DB6358F69EF3037 /* BaseClient.cpp */; };
 		6B24B76B209A63F500C4FF44 /* tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B24B769209A63F500C4FF44 /* tests.cpp */; };
+		6B33E96E20A20973006F772A /* bridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B33E96C20A20973006F772A /* bridge.cpp */; };
 		6B574EBF207F86A500CD4DA4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBB207F86A500CD4DA4 /* WebSocket.swift */; };
 		6B574EC1207F86A500CD4DA4 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBD207F86A500CD4DA4 /* main.mm */; };
 		6B574EC2207F86A500CD4DA4 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B574EBE207F86A500CD4DA4 /* ofApp.mm */; };
@@ -239,6 +240,8 @@
 		6B1863739E6AE92CCE0D8F8D /* ThreadErrorHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ThreadErrorHandler.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/ThreadErrorHandler.h; sourceTree = SOURCE_ROOT; };
 		6B24B769209A63F500C4FF44 /* tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cpp; sourceTree = "<group>"; };
 		6B24B76A209A63F500C4FF44 /* tests.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tests.hpp; sourceTree = "<group>"; };
+		6B33E96C20A20973006F772A /* bridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bridge.cpp; sourceTree = "<group>"; };
+		6B33E96D20A20973006F772A /* bridge.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bridge.hpp; sourceTree = "<group>"; };
 		6B3F092F4C8C44D1F63D65D7 /* HTTPUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = HTTPUtils.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/include/ofx/HTTP/HTTPUtils.h; sourceTree = SOURCE_ROOT; };
 		6B574EBB207F86A500CD4DA4 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		6B574EBD207F86A500CD4DA4 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -1079,14 +1082,16 @@
 				6BF68BAC207FB55F00DB541E /* sleuth.cpp */,
 				6BF68BA9207FB39400DB541E /* search_cred.cpp */,
 				6BA4F5172097F19500842491 /* categorizer.cpp */,
+				6B33E96C20A20973006F772A /* bridge.cpp */,
 				6BFFB8722084137B00C17204 /* utility.cpp */,
 				6B24B769209A63F500C4FF44 /* tests.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				6BF68BB7207FC26B00DB541E /* mitm.hpp */,
 				6BF68BAD207FB55F00DB541E /* sleuth.hpp */,
 				6BF68BAA207FB39400DB541E /* search_cred.hpp */,
-				6BFFB8732084137B00C17204 /* utility.hpp */,
 				6BA4F5182097F19500842491 /* categorizer.hpp */,
+				6B33E96D20A20973006F772A /* bridge.hpp */,
+				6BFFB8732084137B00C17204 /* utility.hpp */,
 				6B24B76A209A63F500C4FF44 /* tests.hpp */,
 			);
 			path = src;
@@ -1291,6 +1296,7 @@
 				630A54B4C43A1DDEA17E6D4F /* ClientProgressStream.cpp in Sources */,
 				CB5F8611AA8E77C8C2BC2290 /* ClientEvents.cpp in Sources */,
 				E5BEC572AA1067BA32E4E08F /* CookieStore.cpp in Sources */,
+				6B33E96E20A20973006F772A /* bridge.cpp in Sources */,
 				A98439CA25D32DDA6D0289BF /* BaseRoute.cpp in Sources */,
 				A8AF031F8417316AFF0D746E /* WebSocketFrame.cpp in Sources */,
 				C9FA1C1991A515E1D265BD79 /* CredentialStore.cpp in Sources */,

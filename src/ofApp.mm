@@ -94,6 +94,7 @@ void ofApp::ProcessArguments() {
         ResetConfidences();
     } else if (is_slave_) {
         // Prepare to receive answer from master
+        bridge_.Init();
         found_answer_ = true;
         answering_ = false;
     } else {
@@ -271,27 +272,6 @@ string ofApp::GetLatestMessage() {
 }
 
 /**
- * Get the latest message from the external provider
- */
-void ofApp::WaitForMaster() {
-    cout << "Waiting for command from master" << endl;
-    string query = ReceiveString();
-    vector<string> pieces = Split(query, '@');
-    
-    if(pieces.size() > kAnswerCount) {
-        string question = pieces[0];
-        vector<string> answers;
-        for (int i = 0; i < kAnswerCount; i++) {
-            answers.push_back(pieces[i + 1]);
-        }
-        
-        UpdateQuestion(question, answers);
-    } else {
-        WaitForMaster();
-    }
-}
-
-/**
  * Update the current question and answers and prepare to look for results
  */
 void ofApp::UpdateQuestion(string question, vector<string> answers) {
@@ -381,7 +361,11 @@ void ofApp::CheckForAnswer() {
         } else {
             if (is_slave_ && !answering_) {
                 // Running in slave mode, need to get new input
-                WaitForMaster();
+                if (bridge_.CheckBridgeReady()) {
+                    if (!bridge_.GetQuestion().empty()) {
+                        UpdateQuestion(bridge_.GetQuestion(), bridge_.GetAnswers());
+                    }
+                }
             }
         }
     }
