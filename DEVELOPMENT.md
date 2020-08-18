@@ -1,4 +1,4 @@
-# CS 126 FinalProject
+# HolmesOF
 
 ## Timeline
 A (somewhat) flexible order of events and ideal deadlines
